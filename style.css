@@ -29,14 +29,18 @@ body {
   color: var(--markdown-view-text-color);
 }
 
-#settingsPanel {
+#settingsPanel,
+#markdownShortcutsPanel {
+  /* Apply common styles to both panels */
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
   width: 18.75rem; /* 300px */
-  background-color: var(--settings-panel-bg-color);
-  color: var(--settings-panel-text-color);
+  background-color: var(
+    --settings-panel-bg-color
+  ); /* Reuse setting panel background */
+  color: var(--settings-panel-text-color); /* Reuse setting panel text color */
   box-shadow: -0.25rem 0 0.625rem rgba(0, 0, 0, 0.3); /* -4px 0 10px */
   transform: translateX(100%);
   transition: transform 0.3s ease-out;
@@ -44,7 +48,9 @@ body {
   z-index: 100;
 }
 
-#settingsPanel.open {
+#settingsPanel.open,
+#markdownShortcutsPanel.open {
+  /* Apply open state to both panels */
   transform: translateX(0);
 }
 

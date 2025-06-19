@@ -8,6 +8,11 @@ const settingsButton = document.getElementById("settingsButton");
 const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
 
+const helpButton = document.getElementById("helpButton"); // New: Help Button
+const markdownShortcutsPanel = document.getElementById(
+  "markdownShortcutsPanel"
+); // New: Shortcuts Panel
+
 const fontSizeSlider = document.getElementById("fontSizeSlider");
 const fontSizeValueSpan = document.getElementById("fontSizeValue");
 const resetFontSizeButton = document.getElementById("resetFontSize");
@@ -127,9 +132,17 @@ function applySettings() {
   applyControlBarHoverBehavior();
 }
 
-function toggleSettingsPanel() {
-  settingsPanel.classList.toggle("open");
+// Refactored to be a generic panel toggler
+function togglePanel(panel) {
+  panel.classList.toggle("open");
   overlay.classList.toggle("hidden");
+
+  // Ensure only one panel is open at a time
+  if (panel.id === "settingsPanel") {
+    markdownShortcutsPanel.classList.remove("open");
+  } else if (panel.id === "markdownShortcutsPanel") {
+    settingsPanel.classList.remove("open");
+  }
 }
 
 // Saves all current settings to localStorage.
@@ -248,8 +261,15 @@ writingArea.addEventListener("input", () => {
   localStorage.setItem("savedContent", writingArea.value);
 });
 
-settingsButton.addEventListener("click", toggleSettingsPanel);
-overlay.addEventListener("click", toggleSettingsPanel); // Close on overlay click
+// Event listeners for panels
+settingsButton.addEventListener("click", () => togglePanel(settingsPanel));
+helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel)); // New: Help button listener
+overlay.addEventListener("click", () => {
+  // Close all open panels on overlay click
+  settingsPanel.classList.remove("open");
+  markdownShortcutsPanel.classList.remove("open");
+  overlay.classList.add("hidden");
+});
 
 fontSizeSlider.addEventListener("input", (e) => {
   currentFontSize = parseInt(e.target.value);
