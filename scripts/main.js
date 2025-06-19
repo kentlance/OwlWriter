@@ -161,12 +161,24 @@ function loadSettings() {
   currentMarkdownViewTextColor =
     localStorage.getItem("markdownViewTextColor") ||
     defaultSettings.markdownViewTextColor;
-  isWordCountVisible =
-    localStorage.getItem("isWordCountVisible") === "true" ||
-    defaultSettings.isWordCountVisible;
-  hideControlBarOnHover =
-    localStorage.getItem("hideControlBarOnHover") === "true" ||
-    defaultSettings.hideControlBarOnHover; // Load new setting
+  const storedIsWordCountVisible = localStorage.getItem("isWordCountVisible");
+  if (storedIsWordCountVisible === "true") {
+    isWordCountVisible = true;
+  } else if (storedIsWordCountVisible === "false") {
+    isWordCountVisible = false;
+  } else {
+    isWordCountVisible = defaultSettings.isWordCountVisible;
+  }
+  const storedHideControlBarOnHover = localStorage.getItem(
+    "hideControlBarOnHover"
+  );
+  if (storedHideControlBarOnHover === "true") {
+    hideControlBarOnHover = true;
+  } else if (storedHideControlBarOnHover === "false") {
+    hideControlBarOnHover = false;
+  } else {
+    hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
+  }
 }
 
 function resetAllToDefault() {
