@@ -2,16 +2,18 @@ export const defaultColors = {
   light: {
     accent: "#2196f3",
     bg: "#f3f4f6",
+    text: "#1f2937",
     writingAreaBg: "#ffffff",
     writingAreaText: "#1f2937",
     markdownViewText: "#1f2937",
   },
   dark: {
-    accent: "#60a5fa",
-    bg: "#1f2937",
-    writingAreaBg: "#374151",
-    writingAreaText: "#e5e7eb",
-    markdownViewText: "#e5e7eb",
+    accent: "#64b5f6",
+    bg: "#1c1f3b",
+    text: "#e0e0e0",
+    writingAreaBg: "#282b49",
+    writingAreaText: "#f0f0f0",
+    markdownViewText: "#e0e0e0",
   },
 };
 
@@ -30,29 +32,35 @@ export function applyAccentColor(color) {
   localStorage.setItem("accentColor", color);
 }
 
-export function applyBgColor(color) {
-  applyCssVar("--bg-color", color);
-  localStorage.setItem("customBgColor", color);
+export function applyAppBgColor(color) {
+  applyCssVar("--app-bg-color", color);
+  localStorage.setItem("appBgColor", color);
+}
+
+export function applyAppTextColor(color) {
+  applyCssVar("--app-text-color", color);
+  localStorage.setItem("appTextColor", color);
 }
 
 export function applyWritingAreaBgColor(color) {
   applyCssVar("--writing-area-bg-color", color);
-  localStorage.setItem("customWritingAreaBgColor", color);
+  localStorage.setItem("writingAreaBgColor", color);
 }
 
 export function applyWritingAreaTextColor(color) {
   applyCssVar("--writing-area-text-color", color);
-  localStorage.setItem("customWritingAreaTextColor", color);
+  localStorage.setItem("writingAreaTextColor", color);
 }
 
 export function applyMarkdownViewTextColor(color) {
   applyCssVar("--markdown-view-text-color", color);
-  localStorage.setItem("customMarkdownViewTextColor", color);
+  localStorage.setItem("markdownViewTextColor", color);
 }
 
 export function applyAllColors(
   accentPicker,
-  bgPicker,
+  appBgPicker,
+  appTextPicker,
   writingAreaBgPicker,
   writingAreaTextPicker,
   markdownViewTextPicker
@@ -60,28 +68,37 @@ export function applyAllColors(
   const currentTheme = getSystemTheme();
   const themeDefaults = defaultColors[currentTheme];
 
+  // Accent Color
   let accentColor = localStorage.getItem("accentColor") || themeDefaults.accent;
   applyCssVar("--accent-color", accentColor);
   if (accentPicker) accentPicker.value = accentColor;
 
-  let bgColor = localStorage.getItem("customBgColor") || themeDefaults.bg;
-  applyCssVar("--bg-color", bgColor);
-  if (bgPicker) bgPicker.value = bgColor;
+  // App Background Color
+  let appBgColor = localStorage.getItem("appBgColor") || themeDefaults.bg;
+  applyCssVar("--app-bg-color", appBgColor);
+  if (appBgPicker) appBgPicker.value = appBgColor;
 
+  // App Text Color (NEW section)
+  let appTextColor = localStorage.getItem("appTextColor") || themeDefaults.text;
+  applyCssVar("--app-text-color", appTextColor);
+  if (appTextPicker) appTextPicker.value = appTextColor;
+
+  // Writing Area Background Color
   let writingAreaBgColor =
-    localStorage.getItem("customWritingAreaBgColor") ||
-    themeDefaults.writingAreaBg;
+    localStorage.getItem("writingAreaBgColor") || themeDefaults.writingAreaBg;
   applyCssVar("--writing-area-bg-color", writingAreaBgColor);
   if (writingAreaBgPicker) writingAreaBgPicker.value = writingAreaBgColor;
 
+  // Writing Area Text Color
   let writingAreaTextColor =
-    localStorage.getItem("customWritingAreaTextColor") ||
+    localStorage.getItem("writingAreaTextColor") ||
     themeDefaults.writingAreaText;
   applyCssVar("--writing-area-text-color", writingAreaTextColor);
   if (writingAreaTextPicker) writingAreaTextPicker.value = writingAreaTextColor;
 
+  // Markdown View Text Color
   let markdownViewTextColor =
-    localStorage.getItem("customMarkdownViewTextColor") ||
+    localStorage.getItem("markdownViewTextColor") ||
     themeDefaults.markdownViewText;
   applyCssVar("--markdown-view-text-color", markdownViewTextColor);
   if (markdownViewTextPicker)
@@ -90,8 +107,9 @@ export function applyAllColors(
 
 export function resetAllColors() {
   localStorage.removeItem("accentColor");
-  localStorage.removeItem("customBgColor");
-  localStorage.removeItem("customWritingAreaBgColor");
-  localStorage.removeItem("customWritingAreaTextColor");
-  localStorage.removeItem("customMarkdownViewTextColor");
+  localStorage.removeItem("appBgColor");
+  localStorage.removeItem("appTextColor");
+  localStorage.removeItem("writingAreaBgColor");
+  localStorage.removeItem("writingAreaTextColor");
+  localStorage.removeItem("markdownViewTextColor");
 }

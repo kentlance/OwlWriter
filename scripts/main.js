@@ -1,3 +1,16 @@
+import {
+  defaultColors,
+  getSystemTheme,
+  applyAccentColor,
+  applyAppBgColor,
+  applyAppTextColor,
+  applyWritingAreaBgColor,
+  applyWritingAreaTextColor,
+  applyMarkdownViewTextColor,
+  applyAllColors,
+  resetAllColors,
+} from "./colors.js";
+
 const writingArea = document.getElementById("writingArea");
 const markdownOutput = document.getElementById("markdownOutput");
 const statusBar = document.getElementById("statusBar");
@@ -8,10 +21,10 @@ const settingsButton = document.getElementById("settingsButton");
 const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
 
-const helpButton = document.getElementById("helpButton"); // New: Help Button
+const helpButton = document.getElementById("helpButton");
 const markdownShortcutsPanel = document.getElementById(
   "markdownShortcutsPanel"
-); // New: Shortcuts Panel
+);
 
 const fontSizeSlider = document.getElementById("fontSizeSlider");
 const fontSizeValueSpan = document.getElementById("fontSizeValue");
@@ -37,6 +50,9 @@ const resetAccentColorButton = document.getElementById("resetAccentColor");
 const bgColorPicker = document.getElementById("bgColorPicker");
 const resetBgColorButton = document.getElementById("resetBgColor");
 
+const appTextColorPicker = document.getElementById("appTextColorPicker");
+const resetAppTextColorButton = document.getElementById("resetAppTextColor");
+
 const markdownViewTextColorPicker = document.getElementById(
   "markdownViewTextColorPicker"
 );
@@ -50,7 +66,6 @@ const wordCountToggleCheckbox = document.getElementById(
   "wordCountToggleCheckbox"
 );
 
-// Control Bar Visibility
 const controlBar = document.getElementById("controlBar");
 const hideControlBarToggle = document.getElementById("hideControlBarToggle");
 const controlBarHoverTrigger = document.getElementById(
@@ -60,24 +75,14 @@ const controlBarHoverTrigger = document.getElementById(
 // Default Settings
 const defaultSettings = {
   fontSize: 18,
-  writingAreaBgColor: "#282b49",
-  writingAreaTextColor: "#f0f0f0",
-  accentColor: "#64b5f6",
-  appBgColor: "#1c1f3b",
-  markdownViewTextColor: "#e0e0e0",
   isWordCountVisible: true,
   hideControlBarOnHover: false,
 };
 
 // State Variables
 let currentFontSize = defaultSettings.fontSize;
-let currentWritingAreaBgColor = defaultSettings.writingAreaBgColor;
-let currentWritingAreaTextColor = defaultSettings.writingAreaTextColor;
-let currentAccentColor = defaultSettings.accentColor;
-let currentBgColor = defaultSettings.appBgColor;
-let currentMarkdownViewTextColor = defaultSettings.markdownViewTextColor;
 let isWordCountVisible = defaultSettings.isWordCountVisible;
-let hideControlBarOnHover = defaultSettings.hideControlBarOnHover; // State for control bar hiding
+let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
 
 function updateCounts() {
   const text = writingArea.value;
@@ -94,45 +99,23 @@ function applySettings() {
   fontSizeValueSpan.textContent = `${currentFontSize}px`;
   fontSizeSlider.value = currentFontSize;
 
-  // Writing Area Colors
-  document.documentElement.style.setProperty(
-    "--writing-area-bg-color",
-    currentWritingAreaBgColor
-  );
-  writingAreaBgColorPicker.value = currentWritingAreaBgColor;
-
-  document.documentElement.style.setProperty(
-    "--writing-area-text-color",
-    currentWritingAreaTextColor
-  );
-  writingAreaTextColorPicker.value = currentWritingAreaTextColor;
-
-  // App Colors
-  document.documentElement.style.setProperty(
-    "--accent-color",
-    currentAccentColor
-  );
-  accentColorPicker.value = currentAccentColor;
-
-  document.documentElement.style.setProperty("--app-bg-color", currentBgColor);
-  bgColorPicker.value = currentBgColor;
-
-  // Markdown View Text Color
-  document.documentElement.style.setProperty(
-    "--markdown-view-text-color",
-    currentMarkdownViewTextColor
-  );
-  markdownViewTextColorPicker.value = currentMarkdownViewTextColor;
-
   // Word Count Visibility
   statusBar.style.display = isWordCountVisible ? "flex" : "none";
   wordCountToggleCheckbox.checked = isWordCountVisible;
 
   // Apply Control Bar hover behavior
   applyControlBarHoverBehavior();
+
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
 }
 
-// Refactored to be a generic panel toggler
 function togglePanel(panel) {
   panel.classList.toggle("open");
   overlay.classList.toggle("hidden");
@@ -145,14 +128,9 @@ function togglePanel(panel) {
   }
 }
 
-// Saves all current settings to localStorage.
+// Saves all current settings to localStorage
 function saveSettings() {
   localStorage.setItem("fontSize", currentFontSize);
-  localStorage.setItem("writingAreaBgColor", currentWritingAreaBgColor);
-  localStorage.setItem("writingAreaTextColor", currentWritingAreaTextColor);
-  localStorage.setItem("accentColor", currentAccentColor);
-  localStorage.setItem("appBgColor", currentBgColor);
-  localStorage.setItem("markdownViewTextColor", currentMarkdownViewTextColor);
   localStorage.setItem("isWordCountVisible", isWordCountVisible);
   localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
 }
@@ -161,19 +139,7 @@ function saveSettings() {
 function loadSettings() {
   currentFontSize =
     parseInt(localStorage.getItem("fontSize")) || defaultSettings.fontSize;
-  currentWritingAreaBgColor =
-    localStorage.getItem("writingAreaBgColor") ||
-    defaultSettings.writingAreaBgColor;
-  currentWritingAreaTextColor =
-    localStorage.getItem("writingAreaTextColor") ||
-    defaultSettings.writingAreaTextColor;
-  currentAccentColor =
-    localStorage.getItem("accentColor") || defaultSettings.accentColor;
-  currentBgColor =
-    localStorage.getItem("appBgColor") || defaultSettings.appBgColor;
-  currentMarkdownViewTextColor =
-    localStorage.getItem("markdownViewTextColor") ||
-    defaultSettings.markdownViewTextColor;
+
   const storedIsWordCountVisible = localStorage.getItem("isWordCountVisible");
   if (storedIsWordCountVisible === "true") {
     isWordCountVisible = true;
@@ -196,20 +162,14 @@ function loadSettings() {
 
 function resetAllToDefault() {
   currentFontSize = defaultSettings.fontSize;
-  currentWritingAreaBgColor = defaultSettings.writingAreaBgColor;
-  currentWritingAreaTextColor = defaultSettings.writingAreaTextColor;
-  currentAccentColor = defaultSettings.accentColor;
-  currentBgColor = defaultSettings.appBgColor;
-  currentMarkdownViewTextColor = defaultSettings.markdownViewTextColor;
   isWordCountVisible = defaultSettings.isWordCountVisible;
   hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
-
+  resetAllColors();
   applySettings();
   saveSettings();
 }
 
 function showControlBar() {
-  // Only show if the setting is active
   if (hideControlBarOnHover) {
     controlBar.classList.add("control-bar-show");
     controlBar.classList.remove("control-bar-hidden");
@@ -217,8 +177,6 @@ function showControlBar() {
 }
 
 function hideControlBar() {
-  // Only hide if the setting is active AND mouse is not currently over the control bar trigger
-  // prevent bar from disappearing while user is interacting
   if (
     hideControlBarOnHover &&
     !controlBar.matches(":hover") &&
@@ -230,6 +188,11 @@ function hideControlBar() {
 }
 
 function applyControlBarHoverBehavior() {
+  controlBarHoverTrigger.removeEventListener("mouseenter", showControlBar);
+  controlBarHoverTrigger.removeEventListener("mouseleave", hideControlBar);
+  controlBar.removeEventListener("mouseleave", hideControlBar);
+  controlBar.removeEventListener("mouseenter", showControlBar);
+
   if (hideControlBarOnHover) {
     // Initially hide the control bar if the setting is active
     controlBar.classList.add("control-bar-hidden");
@@ -244,12 +207,6 @@ function applyControlBarHoverBehavior() {
     // Ensure the control bar is always visible
     controlBar.classList.add("control-bar-show");
     controlBar.classList.remove("control-bar-hidden");
-
-    // Remove event listeners to disable hover behavior
-    controlBarHoverTrigger.removeEventListener("mouseenter", showControlBar);
-    controlBarHoverTrigger.removeEventListener("mouseleave", hideControlBar);
-    controlBar.removeEventListener("mouseleave", hideControlBar);
-    controlBar.removeEventListener("mouseenter", showControlBar);
   }
   // Update the checkbox state in settings panel to match the loaded/current state
   hideControlBarToggle.checked = hideControlBarOnHover;
@@ -261,11 +218,9 @@ writingArea.addEventListener("input", () => {
   localStorage.setItem("savedContent", writingArea.value);
 });
 
-// Event listeners for panels
 settingsButton.addEventListener("click", () => togglePanel(settingsPanel));
-helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel)); // New: Help button listener
+helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel));
 overlay.addEventListener("click", () => {
-  // Close all open panels on overlay click
   settingsPanel.classList.remove("open");
   markdownShortcutsPanel.classList.remove("open");
   overlay.classList.add("hidden");
@@ -283,58 +238,57 @@ resetFontSizeButton.addEventListener("click", () => {
 });
 
 writingAreaBgColorPicker.addEventListener("input", (e) => {
-  currentWritingAreaBgColor = e.target.value;
-  applySettings();
-  saveSettings();
+  applyWritingAreaBgColor(e.target.value);
 });
 resetWritingAreaBgColorButton.addEventListener("click", () => {
-  currentWritingAreaBgColor = defaultSettings.writingAreaBgColor;
-  applySettings();
-  saveSettings();
+  const defaultColor = defaultColors[getSystemTheme()].writingAreaBg;
+  applyWritingAreaBgColor(defaultColor);
+  writingAreaBgColorPicker.value = defaultColor;
 });
 
 writingAreaTextColorPicker.addEventListener("input", (e) => {
-  currentWritingAreaTextColor = e.target.value;
-  applySettings();
-  saveSettings();
+  applyWritingAreaTextColor(e.target.value);
 });
 resetWritingAreaTextColorButton.addEventListener("click", () => {
-  currentWritingAreaTextColor = defaultSettings.writingAreaTextColor;
-  applySettings();
-  saveSettings();
+  const defaultColor = defaultColors[getSystemTheme()].writingAreaText;
+  applyWritingAreaTextColor(defaultColor);
+  writingAreaTextColorPicker.value = defaultColor;
 });
 
 accentColorPicker.addEventListener("input", (e) => {
-  currentAccentColor = e.target.value;
-  applySettings();
-  saveSettings();
+  applyAccentColor(e.target.value);
 });
 resetAccentColorButton.addEventListener("click", () => {
-  currentAccentColor = defaultSettings.accentColor;
-  applySettings();
-  saveSettings();
+  const defaultColor = defaultColors[getSystemTheme()].accent;
+  applyAccentColor(defaultColor);
+  accentColorPicker.value = defaultColor;
 });
 
 bgColorPicker.addEventListener("input", (e) => {
-  currentBgColor = e.target.value;
-  applySettings();
-  saveSettings();
+  applyAppBgColor(e.target.value);
 });
 resetBgColorButton.addEventListener("click", () => {
-  currentBgColor = defaultSettings.appBgColor;
-  applySettings();
-  saveSettings();
+  const defaultColor = defaultColors[getSystemTheme()].bg;
+  applyAppBgColor(defaultColor);
+  bgColorPicker.value = defaultColor;
+});
+
+appTextColorPicker.addEventListener("input", (e) => {
+  applyAppTextColor(e.target.value);
+});
+resetAppTextColorButton.addEventListener("click", () => {
+  const defaultColor = defaultColors[getSystemTheme()].text;
+  applyAppTextColor(defaultColor);
+  appTextColorPicker.value = defaultColor;
 });
 
 markdownViewTextColorPicker.addEventListener("input", (e) => {
-  currentMarkdownViewTextColor = e.target.value;
-  applySettings();
-  saveSettings();
+  applyMarkdownViewTextColor(e.target.value);
 });
 resetMarkdownViewTextColorButton.addEventListener("click", () => {
-  currentMarkdownViewTextColor = defaultSettings.markdownViewTextColor;
-  applySettings();
-  saveSettings();
+  const defaultColor = defaultColors[getSystemTheme()].markdownViewText;
+  applyMarkdownViewTextColor(defaultColor);
+  markdownViewTextColorPicker.value = defaultColor;
 });
 
 resetAllColorsButton.addEventListener("click", resetAllToDefault);
@@ -360,5 +314,13 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCounts();
 
   loadSettings();
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
   applySettings();
 });

@@ -1,12 +1,15 @@
+/* styles.css */
 :root {
-  --app-bg-color: #1c1f3b;
-  --app-text-color: #e0e0e0;
-  --writing-area-bg-color: #282b49;
-  --writing-area-text-color: #f0f0f0;
-  --accent-color: #64b5f6;
-  --markdown-view-text-color: #e0e0e0;
-  --settings-panel-bg-color: #1c1f3b;
-  --settings-panel-text-color: #e0e0e0;
+  --app-bg-color: initial;
+  --app-text-color: initial;
+  --writing-area-bg-color: initial;
+  --writing-area-text-color: initial;
+  --accent-color: initial;
+  --markdown-view-text-color: initial;
+
+  --settings-panel-bg-color: var(--app-bg-color);
+  --settings-panel-text-color: var(--app-text-color);
+
   --base-size: 16px;
 }
 
