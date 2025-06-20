@@ -13,8 +13,9 @@ import {
 
 import { initPresetsDropdown } from "./presets.js";
 
-const writingArea = document.getElementById("writingArea");
-const markdownOutput = document.getElementById("markdownOutput");
+export const writingArea = document.getElementById("writingArea");
+export const markdownOutput = document.getElementById("markdownOutput");
+
 const statusBar = document.getElementById("statusBar");
 const wordCountSpan = document.getElementById("wordCount");
 const charCountSpan = document.getElementById("charCount");
@@ -23,13 +24,21 @@ const settingsButton = document.getElementById("settingsButton");
 const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
 const closeSettingsButton = document.getElementById("closeSettingsButton");
-const closeMarkdownShortcutsButton = document.getElementById(
-  "closeMarkdownShortcutsButton"
-);
 
 const helpButton = document.getElementById("helpButton");
 const markdownShortcutsPanel = document.getElementById(
   "markdownShortcutsPanel"
+);
+const closeMarkdownShortcutsButton = document.getElementById(
+  "closeMarkdownShortcutsButton"
+);
+
+// Control Bar, and Copy Message
+const copyMessage = document.getElementById("copyMessage"); // Used by showCopyMessage
+const controlBar = document.getElementById("controlBar");
+const hideControlBarToggle = document.getElementById("hideControlBarToggle");
+const controlBarHoverTrigger = document.getElementById(
+  "controlBarHoverTrigger"
 );
 
 // Document Panel Width elements
@@ -84,7 +93,6 @@ const writingAreaBgColorPicker = document.getElementById(
 const resetWritingAreaBgColorButton = document.getElementById(
   "resetWritingAreaBgColor"
 );
-
 const writingAreaTextColorPicker = document.getElementById(
   "writingAreaTextColorPicker"
 );
@@ -111,13 +119,10 @@ const resetMarkdownViewTextAlignButton = document.getElementById(
 
 const accentColorPicker = document.getElementById("accentColorPicker");
 const resetAccentColorButton = document.getElementById("resetAccentColor");
-
 const bgColorPicker = document.getElementById("bgColorPicker");
 const resetBgColorButton = document.getElementById("resetBgColor");
-
 const appTextColorPicker = document.getElementById("appTextColorPicker");
 const resetAppTextColorButton = document.getElementById("resetAppTextColor");
-
 const markdownViewTextColorPicker = document.getElementById(
   "markdownViewTextColorPicker"
 );
@@ -131,12 +136,7 @@ const wordCountToggleCheckbox = document.getElementById(
   "wordCountToggleCheckbox"
 );
 
-const controlBar = document.getElementById("controlBar");
-const hideControlBarToggle = document.getElementById("hideControlBarToggle");
-const controlBarHoverTrigger = document.getElementById(
-  "controlBarHoverTrigger"
-);
-
+// Default Settings
 const defaultSettings = {
   documentPanelWidth: 896,
   writingAreaFontFamily: "serif",
@@ -151,7 +151,7 @@ const defaultSettings = {
   hideControlBarOnHover: false,
 };
 
-// State Variables
+// State Variables - loaded frpm localStorage
 let currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
 let writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
 let currentFontSize = defaultSettings.fontSize;
@@ -175,15 +175,39 @@ const fontFamilyMap = {
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 };
 
-function updateCounts() {
+export function updateCounts() {
   const text = writingArea.value;
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const words = text
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
   const chars = text.length;
 
   wordCountSpan.textContent = `Words: ${words}`;
   charCountSpan.textContent = `Characters: ${chars}`;
 }
 
+export function showCopyMessage(message = "Content Copied!") {
+  copyMessage.classList.remove("opacity-100", "translate-y-0");
+  copyMessage.classList.add("opacity-0", "translate-y-full");
+
+  copyMessage.textContent = message;
+
+  void copyMessage.offsetWidth;
+
+  copyMessage.classList.add("opacity-100", "translate-y-0");
+  copyMessage.classList.remove("opacity-0", "translate-y-full");
+
+  setTimeout(() => {
+    copyMessage.classList.remove("opacity-100", "translate-y-0");
+    copyMessage.classList.add("opacity-0", "translate-y-full");
+  }, 2000); // Message visible for 2 seconds
+}
+
+/**
+ * Applies all current settings to the UI elements.
+ * @exports applySettings
+ */
 export function applySettings() {
   // Document Panel Width
   documentPanel.style.maxWidth = `${currentDocumentPanelWidth}px`;
@@ -260,19 +284,6 @@ export function applySettings() {
   );
 }
 
-function togglePanel(panel) {
-  panel.classList.toggle("open");
-  overlay.classList.toggle("hidden");
-
-  // Ensure only one panel is open at a time
-  if (panel.id === "settingsPanel") {
-    markdownShortcutsPanel.classList.remove("open");
-  } else if (panel.id === "markdownShortcutsPanel") {
-    settingsPanel.classList.remove("open");
-  }
-}
-
-// Saves all current settings to localStorage
 export function saveSettings() {
   localStorage.setItem("documentPanelWidth", currentDocumentPanelWidth);
   localStorage.setItem("writingAreaFontFamily", writingAreaFontFamily);
@@ -286,8 +297,6 @@ export function saveSettings() {
   localStorage.setItem("isWordCountVisible", isWordCountVisible);
   localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
 }
-
-// Loads settings from localStorage or sets default values if not found
 export function loadSettings() {
   currentDocumentPanelWidth =
     parseInt(localStorage.getItem("documentPanelWidth")) ||
@@ -304,17 +313,14 @@ export function loadSettings() {
     localStorage.getItem("writingAreaTextAlign") ||
     defaultSettings.writingAreaTextAlign;
 
-  // Load letter-spacing
   currentLetterSpacing =
     parseFloat(localStorage.getItem("letterSpacing")) ||
     defaultSettings.letterSpacing;
 
-  // Load line-height
   currentLineHeight =
     parseFloat(localStorage.getItem("lineHeight")) ||
     defaultSettings.lineHeight;
 
-  // Load word-spacing
   currentWordSpacing =
     parseFloat(localStorage.getItem("wordSpacing")) ||
     defaultSettings.wordSpacing;
@@ -335,6 +341,7 @@ export function loadSettings() {
   } else {
     isWordCountVisible = defaultSettings.isWordCountVisible;
   }
+
   const storedHideControlBarOnHover = localStorage.getItem(
     "hideControlBarOnHover"
   );
@@ -347,7 +354,20 @@ export function loadSettings() {
   }
 }
 
-// Resets all settings to default
+// Internal Functions
+
+function togglePanel(panel) {
+  panel.classList.toggle("open");
+  overlay.classList.toggle("hidden");
+
+  // Ensure only one panel is open at a time
+  if (panel.id === "settingsPanel") {
+    markdownShortcutsPanel.classList.remove("open");
+  } else if (panel.id === "markdownShortcutsPanel") {
+    settingsPanel.classList.remove("open");
+  }
+}
+
 function resetAllToDefault() {
   currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
   writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
@@ -404,6 +424,7 @@ function applyControlBarHoverBehavior() {
   hideControlBarToggle.checked = hideControlBarOnHover;
 }
 
+// Event Listeners
 writingArea.addEventListener("input", () => {
   updateCounts();
   localStorage.setItem("savedContent", writingArea.value);
@@ -411,20 +432,22 @@ writingArea.addEventListener("input", () => {
 
 settingsButton.addEventListener("click", () => togglePanel(settingsPanel));
 helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel));
+
 overlay.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   markdownShortcutsPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
+
 closeSettingsButton.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
-
 closeMarkdownShortcutsButton.addEventListener("click", () => {
   markdownShortcutsPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
+
 documentPanelWidthSlider.addEventListener("input", (e) => {
   currentDocumentPanelWidth = parseInt(e.target.value);
   applySettings();
@@ -593,6 +616,7 @@ hideControlBarToggle.addEventListener("change", () => {
 
 // Initial Setup on Load
 document.addEventListener("DOMContentLoaded", () => {
+  // Load saved content
   const savedContent = localStorage.getItem("savedContent");
   if (savedContent) {
     writingArea.value = savedContent;
