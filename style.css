@@ -13,7 +13,6 @@
 
   --document-panel-max-width: 896px;
 
-  /* Font Family variables */
   --writing-area-font-family: ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -53,6 +52,7 @@ body {
   box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease-in-out;
   z-index: 100;
+  color: var(--app-text-color);
 }
 
 #settingsPanel.open,
@@ -187,6 +187,21 @@ input[type="range"].range-accent-color::-webkit-slider-thumb {
 }
 input[type="range"].range-accent-color::-moz-range-thumb {
   background: var(--accent-color);
+}
+
+#controlBar button,
+#controlBar button svg {
+  color: var(--app-text-color) !important;
+  stroke: var(--app-text-color) !important;
+}
+
+#exportDropdown a {
+  color: var(--app-text-color) !important;
+}
+
+#markdownShortcutsPanel .text-gray-500,
+#markdownShortcutsPanel .dark\:text-gray-400 {
+  color: var(--app-text-color) !important;
 }
 
 @media (max-width: 640px) {
