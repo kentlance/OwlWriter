@@ -134,7 +134,7 @@ const controlBarHoverTrigger = document.getElementById(
 // Default Settings
 const defaultSettings = {
   documentPanelWidth: 896,
-  writingAreaFontFamily: "system-sans",
+  writingAreaFontFamily: "serif",
   fontSize: 18,
   writingAreaTextAlign: "left",
   letterSpacing: 0,
