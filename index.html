@@ -173,7 +173,6 @@
       </button>
     </div>
 
-    <!-- Main content area container -->
     <div
       id="mainContentContainer"
       class="flex-grow flex items-center justify-center p-4 md:p-8 relative"
@@ -363,6 +362,31 @@
 
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Font Family</label>
+            <button
+              id="resetWritingAreaFontFamily"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner"
+          >
+            <select
+              id="writingAreaFontFamilySelect"
+              class="w-full p-2 rounded-md bg-transparent border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            >
+              <option value="system-sans" selected>Default Sans-serif</option>
+              <option value="inter">Inter</option>
+              <option value="serif">Serif</option>
+              <option value="monospace">Monospace</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium">Font Size</label>
             <button
               id="resetFontSize"
@@ -438,8 +462,98 @@
                 value="justify"
                 class="form-radio text-blue-600 focus:ring-blue-500"
               />
-              <span class="ml-2 text-sm">Justify</span>
+              <span class="ml-2 text-2sm">Justify</span>
             </label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Letter Spacing</label>
+            <button
+              id="resetLetterSpacing"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <input
+              type="range"
+              id="letterSpacingSlider"
+              min="-0.1"
+              max="0.5"
+              value="0"
+              step="0.01"
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+            />
+            <span
+              id="letterSpacingValue"
+              class="text-sm font-semibold w-10 text-right"
+              >0em</span
+            >
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Line Height</label>
+            <button
+              id="resetLineHeight"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <input
+              type="range"
+              id="lineHeightSlider"
+              min="1.0"
+              max="2.5"
+              value="1.5"
+              step="0.1"
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+            />
+            <span
+              id="lineHeightValue"
+              class="text-sm font-semibold w-10 text-right"
+              >1.5</span
+            >
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Word Spacing</label>
+            <button
+              id="resetWordSpacing"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <input
+              type="range"
+              id="wordSpacingSlider"
+              min="-5"
+              max="10"
+              value="0"
+              step="1"
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+            />
+            <span
+              id="wordSpacingValue"
+              class="text-sm font-semibold w-10 text-right"
+              >0px</span
+            >
           </div>
         </div>
 
@@ -568,7 +682,7 @@
                 value="justify"
                 class="form-radio text-blue-600 focus:ring-blue-500"
               />
-              <span class="ml-2 text-sm">Justify</span>
+              <span class="ml-2 text-2sm">Justify</span>
             </label>
           </div>
         </div>

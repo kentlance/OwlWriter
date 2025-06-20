@@ -26,6 +26,7 @@ const markdownShortcutsPanel = document.getElementById(
   "markdownShortcutsPanel"
 );
 
+// Document Panel Width elements
 const documentPanel = document.getElementById("documentPanel");
 const documentPanelWidthSlider = document.getElementById(
   "documentPanelWidthSlider"
@@ -35,6 +36,14 @@ const documentPanelWidthValueSpan = document.getElementById(
 );
 const resetDocumentPanelWidthButton = document.getElementById(
   "resetDocumentPanelWidth"
+);
+
+// Writing Area Font Family elements
+const writingAreaFontFamilySelect = document.getElementById(
+  "writingAreaFontFamilySelect"
+);
+const resetWritingAreaFontFamilyButton = document.getElementById(
+  "resetWritingAreaFontFamily"
 );
 
 const fontSizeSlider = document.getElementById("fontSizeSlider");
@@ -47,6 +56,21 @@ const writingAreaTextAlignRadios = document.querySelectorAll(
 const resetWritingAreaTextAlignButton = document.getElementById(
   "resetWritingAreaTextAlign"
 );
+
+// Writing Area letter-spacing elements
+const letterSpacingSlider = document.getElementById("letterSpacingSlider");
+const letterSpacingValueSpan = document.getElementById("letterSpacingValue");
+const resetLetterSpacingButton = document.getElementById("resetLetterSpacing");
+
+// Writing Area line-height elements
+const lineHeightSlider = document.getElementById("lineHeightSlider");
+const lineHeightValueSpan = document.getElementById("lineHeightValue");
+const resetLineHeightButton = document.getElementById("resetLineHeight");
+
+// Writing Area word-spacing elements
+const wordSpacingSlider = document.getElementById("wordSpacingSlider");
+const wordSpacingValueSpan = document.getElementById("wordSpacingValue");
+const resetWordSpacingButton = document.getElementById("resetWordSpacing");
 
 const writingAreaBgColorPicker = document.getElementById(
   "writingAreaBgColorPicker"
@@ -107,23 +131,44 @@ const controlBarHoverTrigger = document.getElementById(
   "controlBarHoverTrigger"
 );
 
+// Default Settings
 const defaultSettings = {
   documentPanelWidth: 896,
+  writingAreaFontFamily: "system-sans",
   fontSize: 18,
   writingAreaTextAlign: "left",
+  letterSpacing: 0,
+  lineHeight: 1.5,
+  wordSpacing: 0,
   markdownViewFontSize: 16,
   markdownViewTextAlign: "left",
   isWordCountVisible: true,
   hideControlBarOnHover: false,
 };
 
+// State Variable
 let currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
+let writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
 let currentFontSize = defaultSettings.fontSize;
 let writingAreaTextAlign = defaultSettings.writingAreaTextAlign;
+let currentLetterSpacing = defaultSettings.letterSpacing;
+let currentLineHeight = defaultSettings.lineHeight;
+let currentWordSpacing = defaultSettings.wordSpacing;
 let currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
 let markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
 let isWordCountVisible = defaultSettings.isWordCountVisible;
 let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
+
+// Helper function to map font family keys to CSS font stacks
+const fontFamilyMap = {
+  "system-sans":
+    'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  inter:
+    'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  monospace:
+    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+};
 
 function updateCounts() {
   const text = writingArea.value;
@@ -140,6 +185,13 @@ function applySettings() {
   documentPanelWidthValueSpan.textContent = `${currentDocumentPanelWidth}px`;
   documentPanelWidthSlider.value = currentDocumentPanelWidth;
 
+  // Writing Area Font Family
+  document.documentElement.style.setProperty(
+    "--writing-area-font-family",
+    fontFamilyMap[writingAreaFontFamily]
+  );
+  writingAreaFontFamilySelect.value = writingAreaFontFamily;
+
   // Writing Area Font Size
   writingArea.style.fontSize = `${currentFontSize}px`;
   fontSizeValueSpan.textContent = `${currentFontSize}px`;
@@ -150,6 +202,30 @@ function applySettings() {
   writingAreaTextAlignRadios.forEach((radio) => {
     radio.checked = radio.value === writingAreaTextAlign;
   });
+
+  // Writing Area letter-spacing
+  document.documentElement.style.setProperty(
+    "--writing-area-letter-spacing",
+    `${currentLetterSpacing}em`
+  );
+  letterSpacingSlider.value = currentLetterSpacing;
+  letterSpacingValueSpan.textContent = `${currentLetterSpacing}em`;
+
+  // Writing Area line-height
+  document.documentElement.style.setProperty(
+    "--writing-area-line-height",
+    currentLineHeight
+  ); // Unitless line-height is preferred
+  lineHeightSlider.value = currentLineHeight;
+  lineHeightValueSpan.textContent = currentLineHeight;
+
+  // Writing Area word-spacing
+  document.documentElement.style.setProperty(
+    "--writing-area-word-spacing",
+    `${currentWordSpacing}px`
+  );
+  wordSpacingSlider.value = currentWordSpacing;
+  wordSpacingValueSpan.textContent = `${currentWordSpacing}px`;
 
   // Markdown View Font Size
   markdownOutput.style.fontSize = `${currentMarkdownViewFontSize}px`;
@@ -194,8 +270,12 @@ function togglePanel(panel) {
 // Saves all current settings to localStorage
 function saveSettings() {
   localStorage.setItem("documentPanelWidth", currentDocumentPanelWidth);
+  localStorage.setItem("writingAreaFontFamily", writingAreaFontFamily);
   localStorage.setItem("fontSize", currentFontSize);
   localStorage.setItem("writingAreaTextAlign", writingAreaTextAlign);
+  localStorage.setItem("letterSpacing", currentLetterSpacing);
+  localStorage.setItem("lineHeight", currentLineHeight);
+  localStorage.setItem("wordSpacing", currentWordSpacing);
   localStorage.setItem("markdownViewFontSize", currentMarkdownViewFontSize);
   localStorage.setItem("markdownViewTextAlign", markdownViewTextAlign);
   localStorage.setItem("isWordCountVisible", isWordCountVisible);
@@ -208,12 +288,31 @@ function loadSettings() {
     parseInt(localStorage.getItem("documentPanelWidth")) ||
     defaultSettings.documentPanelWidth;
 
+  writingAreaFontFamily =
+    localStorage.getItem("writingAreaFontFamily") ||
+    defaultSettings.writingAreaFontFamily;
+
   currentFontSize =
     parseInt(localStorage.getItem("fontSize")) || defaultSettings.fontSize;
 
   writingAreaTextAlign =
     localStorage.getItem("writingAreaTextAlign") ||
     defaultSettings.writingAreaTextAlign;
+
+  // Load letter-spacing
+  currentLetterSpacing =
+    parseFloat(localStorage.getItem("letterSpacing")) ||
+    defaultSettings.letterSpacing;
+
+  // Load line-height
+  currentLineHeight =
+    parseFloat(localStorage.getItem("lineHeight")) ||
+    defaultSettings.lineHeight;
+
+  // Load word-spacing
+  currentWordSpacing =
+    parseFloat(localStorage.getItem("wordSpacing")) ||
+    defaultSettings.wordSpacing;
 
   currentMarkdownViewFontSize =
     parseInt(localStorage.getItem("markdownViewFontSize")) ||
@@ -246,8 +345,12 @@ function loadSettings() {
 // Resets all settings to default
 function resetAllToDefault() {
   currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
+  writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
   currentFontSize = defaultSettings.fontSize;
   writingAreaTextAlign = defaultSettings.writingAreaTextAlign;
+  currentLetterSpacing = defaultSettings.letterSpacing;
+  currentLineHeight = defaultSettings.lineHeight;
+  currentWordSpacing = defaultSettings.wordSpacing;
   currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
   markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
   isWordCountVisible = defaultSettings.isWordCountVisible;
@@ -282,25 +385,20 @@ function applyControlBarHoverBehavior() {
   controlBar.removeEventListener("mouseenter", showControlBar);
 
   if (hideControlBarOnHover) {
-    // Initially hide the control bar if the setting is active
     controlBar.classList.add("control-bar-hidden");
     controlBar.classList.remove("control-bar-show");
 
-    // Add event listeners for hover interactions
     controlBarHoverTrigger.addEventListener("mouseenter", showControlBar);
     controlBarHoverTrigger.addEventListener("mouseleave", hideControlBar);
-    controlBar.addEventListener("mouseleave", hideControlBar); // Hide if mouse leaves bar directly
-    controlBar.addEventListener("mouseenter", showControlBar); // stay visible if mouse is over it
+    controlBar.addEventListener("mouseleave", hideControlBar);
+    controlBar.addEventListener("mouseenter", showControlBar);
   } else {
-    // Ensure the control bar is always visible
     controlBar.classList.add("control-bar-show");
     controlBar.classList.remove("control-bar-hidden");
   }
-  // Update the checkbox state in settings panel to match the loaded/current state
   hideControlBarToggle.checked = hideControlBarOnHover;
 }
 
-// Listen for input on the writing area to update counts and save content
 writingArea.addEventListener("input", () => {
   updateCounts();
   localStorage.setItem("savedContent", writingArea.value);
@@ -314,6 +412,7 @@ overlay.addEventListener("click", () => {
   overlay.classList.add("hidden");
 });
 
+// Event Listeners for Document Panel Width
 documentPanelWidthSlider.addEventListener("input", (e) => {
   currentDocumentPanelWidth = parseInt(e.target.value);
   applySettings();
@@ -325,6 +424,19 @@ resetDocumentPanelWidthButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Event Listeners for Writing Area Font Family
+writingAreaFontFamilySelect.addEventListener("change", (e) => {
+  writingAreaFontFamily = e.target.value;
+  applySettings();
+  saveSettings();
+});
+resetWritingAreaFontFamilyButton.addEventListener("click", () => {
+  writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
+  applySettings();
+  saveSettings();
+});
+
+// Event Listeners for Writing Area Font Size
 fontSizeSlider.addEventListener("input", (e) => {
   currentFontSize = parseInt(e.target.value);
   applySettings();
@@ -336,7 +448,7 @@ resetFontSizeButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Writing Area Text Align
+// Event Listeners for Writing Area Text Align
 writingAreaTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     writingAreaTextAlign = e.target.value;
@@ -350,6 +462,43 @@ resetWritingAreaTextAlignButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Event Listeners for Letter Spacing
+letterSpacingSlider.addEventListener("input", (e) => {
+  currentLetterSpacing = parseFloat(e.target.value);
+  applySettings();
+  saveSettings();
+});
+resetLetterSpacingButton.addEventListener("click", () => {
+  currentLetterSpacing = defaultSettings.letterSpacing;
+  applySettings();
+  saveSettings();
+});
+
+// Event Listeners for Line Height
+lineHeightSlider.addEventListener("input", (e) => {
+  currentLineHeight = parseFloat(e.target.value);
+  applySettings();
+  saveSettings();
+});
+resetLineHeightButton.addEventListener("click", () => {
+  currentLineHeight = defaultSettings.lineHeight;
+  applySettings();
+  saveSettings();
+});
+
+// Event Listeners for Word Spacing
+wordSpacingSlider.addEventListener("input", (e) => {
+  currentWordSpacing = parseFloat(e.target.value);
+  applySettings();
+  saveSettings();
+});
+resetWordSpacingButton.addEventListener("click", () => {
+  currentWordSpacing = defaultSettings.wordSpacing;
+  applySettings();
+  saveSettings();
+});
+
+// Event Listeners for Writing Area Background Color
 writingAreaBgColorPicker.addEventListener("input", (e) => {
   applyWritingAreaBgColor(e.target.value);
 });
@@ -359,6 +508,7 @@ resetWritingAreaBgColorButton.addEventListener("click", () => {
   writingAreaBgColorPicker.value = defaultColor;
 });
 
+// Event Listeners for Writing Area Text Color
 writingAreaTextColorPicker.addEventListener("input", (e) => {
   applyWritingAreaTextColor(e.target.value);
 });
@@ -368,6 +518,7 @@ resetWritingAreaTextColorButton.addEventListener("click", () => {
   writingAreaTextColorPicker.value = defaultColor;
 });
 
+// Event Listeners for Markdown View Font Size
 markdownViewFontSizeSlider.addEventListener("input", (e) => {
   currentMarkdownViewFontSize = parseInt(e.target.value);
   applySettings();
@@ -379,6 +530,7 @@ resetMarkdownViewFontSizeButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Event Listeners for Markdown View Text Align
 markdownViewTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     markdownViewTextAlign = e.target.value;
@@ -392,6 +544,7 @@ resetMarkdownViewTextAlignButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Event Listeners for App Style (Colors)
 accentColorPicker.addEventListener("input", (e) => {
   applyAccentColor(e.target.value);
 });
