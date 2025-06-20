@@ -2,7 +2,7 @@
 
 **Check it out here:** https://kentlance.github.io/OwlWriter/
 
-I built this because I wanted a writer web app specifically with how I wanted it to look. This has a customizable interface to allow you to make the app look like however you want.
+I wanted a writing app that looked specifically how I wanted it to. This has a very customizable interface so you can change it to however you like.
 
 Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https://www.gibney.org/writer"  >Writer</a>.
 
