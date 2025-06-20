@@ -20,6 +20,7 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - Line highlighting (focused mode)
 - Fullscreen
 - Full offline support (use service workers)
+- Import and export settings
 
 ## Technologies Used
 
