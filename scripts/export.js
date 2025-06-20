@@ -4,8 +4,11 @@ const exportTxtButton = document.getElementById("exportTxt");
 const exportHtmlButton = document.getElementById("exportHtml");
 const exportMdButton = document.getElementById("exportMd");
 
+const copyAllButton = document.getElementById("copyAllButton");
+const copyMessage = document.getElementById("copyMessage");
+
 const writingArea = document.getElementById("writingArea"); // For MD and TXT
-const markdownOutput = document.getElementById("markdownOutput"); // For HTML
+const markdownOutput = document.getElementById("markdownOutput"); // For HTML export only
 
 // generate a timestamped filename
 function generateFilename(extension) {
@@ -146,14 +149,56 @@ function exportAsMd() {
   exportDropdown.style.display = "none";
 }
 
+function copyContentToClipboard() {
+  const contentToCopy = writingArea.value;
+
+  // Use a temporary textarea to perform the copy operation
+  const tempTextArea = document.createElement("textarea");
+  tempTextArea.value = contentToCopy;
+  document.body.appendChild(tempTextArea);
+  tempTextArea.select();
+  tempTextArea.setSelectionRange(0, 99999); // For mobile devices, ensures full selection
+
+  try {
+    document.execCommand("copy");
+    showCopyMessage();
+  } catch (err) {
+    console.error("Failed to copy content: ", err);
+  } finally {
+    document.body.removeChild(tempTextArea);
+  }
+}
+
+// Function to show the copy confirmation message
+function showCopyMessage() {
+  // Ensure the message starts fully transparent and off-screen before showing
+  copyMessage.classList.remove("opacity-100", "translate-y-0");
+  copyMessage.classList.add("opacity-0", "translate-y-full");
+
+  // Force reflow to ensure the transition plays from the correct starting state
+  void copyMessage.offsetWidth;
+
+  // Make visible and transition to final position
+  copyMessage.classList.add("opacity-100", "translate-y-0");
+  copyMessage.classList.remove("opacity-0", "translate-y-full");
+
+  // Hide the message after a delay
+  setTimeout(() => {
+    copyMessage.classList.remove("opacity-100", "translate-y-0");
+    copyMessage.classList.add("opacity-0", "translate-y-full");
+  }, 2000); // Message visible for 2 seconds
+}
+
+// Event Listeners for Export Dropdown
 exportButton.addEventListener("click", (e) => {
-  e.stopPropagation();
+  e.stopPropagation(); // Prevent this click from immediately closing the dropdown via the document listener
   exportDropdown.style.display =
     exportDropdown.style.display === "block" ? "none" : "block";
 });
 
 // Close dropdown if clicked outside
 document.addEventListener("click", (e) => {
+  // Check if the click was outside the export button and the dropdown itself
   if (!exportButton.contains(e.target) && !exportDropdown.contains(e.target)) {
     exportDropdown.style.display = "none";
   }
@@ -162,3 +207,8 @@ document.addEventListener("click", (e) => {
 exportTxtButton.addEventListener("click", exportAsTxt);
 exportHtmlButton.addEventListener("click", exportAsHtml);
 exportMdButton.addEventListener("click", exportAsMd);
+
+// Event Listener for Copy All button
+if (copyAllButton) {
+  copyAllButton.addEventListener("click", copyContentToClipboard);
+}
