@@ -20,6 +20,7 @@ const charCountSpan = document.getElementById("charCount");
 const settingsButton = document.getElementById("settingsButton");
 const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
+const closeSettingsButton = document.getElementById("closeSettingsButton");
 
 const helpButton = document.getElementById("helpButton");
 const markdownShortcutsPanel = document.getElementById(
@@ -131,7 +132,6 @@ const controlBarHoverTrigger = document.getElementById(
   "controlBarHoverTrigger"
 );
 
-// Default Settings
 const defaultSettings = {
   documentPanelWidth: 896,
   writingAreaFontFamily: "serif",
@@ -146,7 +146,7 @@ const defaultSettings = {
   hideControlBarOnHover: false,
 };
 
-// State Variable
+// State Variables
 let currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
 let writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
 let currentFontSize = defaultSettings.fontSize;
@@ -215,7 +215,7 @@ function applySettings() {
   document.documentElement.style.setProperty(
     "--writing-area-line-height",
     currentLineHeight
-  ); // Unitless line-height is preferred
+  );
   lineHeightSlider.value = currentLineHeight;
   lineHeightValueSpan.textContent = currentLineHeight;
 
@@ -412,7 +412,11 @@ overlay.addEventListener("click", () => {
   overlay.classList.add("hidden");
 });
 
-// Event Listeners for Document Panel Width
+closeSettingsButton.addEventListener("click", () => {
+  settingsPanel.classList.remove("open");
+  overlay.classList.add("hidden");
+});
+
 documentPanelWidthSlider.addEventListener("input", (e) => {
   currentDocumentPanelWidth = parseInt(e.target.value);
   applySettings();
@@ -424,7 +428,6 @@ resetDocumentPanelWidthButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Writing Area Font Family
 writingAreaFontFamilySelect.addEventListener("change", (e) => {
   writingAreaFontFamily = e.target.value;
   applySettings();
@@ -436,7 +439,6 @@ resetWritingAreaFontFamilyButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Writing Area Font Size
 fontSizeSlider.addEventListener("input", (e) => {
   currentFontSize = parseInt(e.target.value);
   applySettings();
@@ -448,7 +450,6 @@ resetFontSizeButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Writing Area Text Align
 writingAreaTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     writingAreaTextAlign = e.target.value;
@@ -462,7 +463,6 @@ resetWritingAreaTextAlignButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Letter Spacing
 letterSpacingSlider.addEventListener("input", (e) => {
   currentLetterSpacing = parseFloat(e.target.value);
   applySettings();
@@ -474,7 +474,6 @@ resetLetterSpacingButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Line Height
 lineHeightSlider.addEventListener("input", (e) => {
   currentLineHeight = parseFloat(e.target.value);
   applySettings();
@@ -486,7 +485,6 @@ resetLineHeightButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Word Spacing
 wordSpacingSlider.addEventListener("input", (e) => {
   currentWordSpacing = parseFloat(e.target.value);
   applySettings();
@@ -498,7 +496,6 @@ resetWordSpacingButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Writing Area Background Color
 writingAreaBgColorPicker.addEventListener("input", (e) => {
   applyWritingAreaBgColor(e.target.value);
 });
@@ -508,7 +505,6 @@ resetWritingAreaBgColorButton.addEventListener("click", () => {
   writingAreaBgColorPicker.value = defaultColor;
 });
 
-// Event Listeners for Writing Area Text Color
 writingAreaTextColorPicker.addEventListener("input", (e) => {
   applyWritingAreaTextColor(e.target.value);
 });
@@ -518,7 +514,6 @@ resetWritingAreaTextColorButton.addEventListener("click", () => {
   writingAreaTextColorPicker.value = defaultColor;
 });
 
-// Event Listeners for Markdown View Font Size
 markdownViewFontSizeSlider.addEventListener("input", (e) => {
   currentMarkdownViewFontSize = parseInt(e.target.value);
   applySettings();
@@ -530,7 +525,6 @@ resetMarkdownViewFontSizeButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for Markdown View Text Align
 markdownViewTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     markdownViewTextAlign = e.target.value;
@@ -544,7 +538,6 @@ resetMarkdownViewTextAlignButton.addEventListener("click", () => {
   saveSettings();
 });
 
-// Event Listeners for App Style (Colors)
 accentColorPicker.addEventListener("input", (e) => {
   applyAccentColor(e.target.value);
 });

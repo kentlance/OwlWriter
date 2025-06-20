@@ -19,7 +19,6 @@
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
 
-  --writing-area-text-indent: 0px;
   --writing-area-letter-spacing: 0em;
   --writing-area-line-height: 1.5;
   --writing-area-word-spacing: 0px;
@@ -61,6 +60,16 @@ body {
   right: 0;
 }
 
+#closeSettingsButton {
+  z-index: 101;
+}
+
+#settingsPanel h2 {
+  position: relative;
+  z-index: 10;
+  padding-right: 40px;
+}
+
 #overlay {
   position: fixed;
   top: 0;
@@ -95,7 +104,6 @@ body {
   font-size: var(--writing-area-font-size);
   text-align: var(--writing-area-text-align);
   font-family: var(--writing-area-font-family);
-  text-indent: var(--writing-area-text-indent);
   letter-spacing: var(--writing-area-letter-spacing);
   line-height: var(--writing-area-line-height);
   word-spacing: var(--writing-area-word-spacing);
@@ -179,4 +187,18 @@ input[type="range"].range-accent-color::-webkit-slider-thumb {
 }
 input[type="range"].range-accent-color::-moz-range-thumb {
   background: var(--accent-color);
+}
+
+@media (max-width: 640px) {
+  #settingsPanel,
+  #markdownShortcutsPanel {
+    width: 100%;
+    right: -100%;
+    padding: 1rem;
+  }
+
+  #settingsPanel.open,
+  #markdownShortcutsPanel.open {
+    right: 0;
+  }
 }
