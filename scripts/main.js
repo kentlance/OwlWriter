@@ -11,6 +11,8 @@ import {
   resetAllColors,
 } from "./colors.js";
 
+import { initPresetsDropdown } from "./presets.js";
+
 const writingArea = document.getElementById("writingArea");
 const markdownOutput = document.getElementById("markdownOutput");
 const statusBar = document.getElementById("statusBar");
@@ -179,7 +181,7 @@ function updateCounts() {
   charCountSpan.textContent = `Characters: ${chars}`;
 }
 
-function applySettings() {
+export function applySettings() {
   // Document Panel Width
   documentPanel.style.maxWidth = `${currentDocumentPanelWidth}px`;
   documentPanelWidthValueSpan.textContent = `${currentDocumentPanelWidth}px`;
@@ -268,7 +270,7 @@ function togglePanel(panel) {
 }
 
 // Saves all current settings to localStorage
-function saveSettings() {
+export function saveSettings() {
   localStorage.setItem("documentPanelWidth", currentDocumentPanelWidth);
   localStorage.setItem("writingAreaFontFamily", writingAreaFontFamily);
   localStorage.setItem("fontSize", currentFontSize);
@@ -283,7 +285,7 @@ function saveSettings() {
 }
 
 // Loads settings from localStorage or sets default values if not found
-function loadSettings() {
+export function loadSettings() {
   currentDocumentPanelWidth =
     parseInt(localStorage.getItem("documentPanelWidth")) ||
     defaultSettings.documentPanelWidth;
@@ -411,7 +413,6 @@ overlay.addEventListener("click", () => {
   markdownShortcutsPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
-
 closeSettingsButton.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   overlay.classList.add("hidden");
@@ -600,5 +601,6 @@ document.addEventListener("DOMContentLoaded", () => {
     writingAreaTextColorPicker,
     markdownViewTextColorPicker
   );
-  applySettings(); // Apply all settings loaded from localStorage or defaults
+  applySettings();
+  initPresetsDropdown();
 });

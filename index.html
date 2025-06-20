@@ -348,6 +348,17 @@
       </button>
 
       <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Settings Presets</label>
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner"
+          >
+            <select
+              id="presetSelect"
+              class="w-full p-2 rounded-md bg-transparent border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            ></select>
+          </div>
+        </div>
         <h3 class="text-lg font-semibold mb-3">Document Panel</h3>
 
         <div class="mb-4">
@@ -808,6 +819,7 @@
       </div>
       <div class="mb-6 pb-4">
         <h3 class="text-lg font-semibold mb-3">App Functionality</h3>
+
         <div class="mb-4">
           <label class="block text-sm font-medium mb-2"
             >Control Bar Visibility</label
@@ -849,5 +861,6 @@
     <script type="module" src="scripts/markdown.js"></script>
     <script type="module" src="scripts/colors.js"></script>
     <script type="module" src="scripts/export.js"></script>
+    <script type="module" src="scripts/presets.js"></script>
   </body>
 </html>
