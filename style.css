@@ -21,6 +21,9 @@
   --writing-area-letter-spacing: 0em;
   --writing-area-line-height: 1.5;
   --writing-area-word-spacing: 0px;
+
+  --dropdown-bg-color: #b0d7ff;
+  --dropdown-text-color: #1f2937;
 }
 
 .dark {
@@ -30,6 +33,9 @@
   --writing-area-bg-color: #282b49;
   --writing-area-text-color: #f0f0f0;
   --markdown-view-text-color: #e0e0e0;
+
+  --dropdown-bg-color: #2d3748;
+  --dropdown-text-color: #f8fafc;
 }
 
 body {
@@ -60,11 +66,13 @@ body {
   right: 0;
 }
 
-#closeSettingsButton {
+#closeSettingsButton,
+#closeMarkdownShortcutsButton {
   z-index: 101;
 }
 
-#settingsPanel h2 {
+#settingsPanel h2,
+#markdownShortcutsPanel h2 {
   position: relative;
   z-index: 10;
   padding-right: 40px;
@@ -202,6 +210,21 @@ input[type="range"].range-accent-color::-moz-range-thumb {
 #markdownShortcutsPanel .text-gray-500,
 #markdownShortcutsPanel .dark\:text-gray-400 {
   color: var(--app-text-color) !important;
+}
+
+#settingsPanel select {
+  background-color: var(--dropdown-bg-color) !important;
+  color: var(--dropdown-text-color) !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2rem;
+  border: 1px solid var(--app-text-color) !important;
+}
+
+#settingsPanel select option {
+  background-color: var(--dropdown-bg-color) !important;
+  color: var(--dropdown-text-color) !important;
 }
 
 @media (max-width: 640px) {
