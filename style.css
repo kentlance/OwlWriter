@@ -1,60 +1,53 @@
-/* styles.css */
 :root {
-  --app-bg-color: initial;
-  --app-text-color: initial;
-  --writing-area-bg-color: initial;
-  --writing-area-text-color: initial;
-  --accent-color: initial;
-  --markdown-view-text-color: initial;
+  --accent-color: #2196f3;
+  --app-bg-color: #f3f4f6;
+  --app-text-color: #1f2937;
+  --writing-area-bg-color: #ffffff;
+  --writing-area-text-color: #1f2937;
+  --markdown-view-text-color: #1f2937;
 
-  --settings-panel-bg-color: var(--app-bg-color);
-  --settings-panel-text-color: var(--app-text-color);
+  --writing-area-font-size: 18px;
+  --writing-area-text-align: left;
+  --markdown-view-font-size: 16px;
+  --markdown-view-text-align: left;
 
-  --base-size: 16px;
+  --document-panel-max-width: 896px;
+}
+
+.dark {
+  --accent-color: #64b5f6;
+  --app-bg-color: #1c1f3b;
+  --app-text-color: #e0e0e0;
+  --writing-area-bg-color: #282b49;
+  --writing-area-text-color: #f0f0f0;
+  --markdown-view-text-color: #e0e0e0;
 }
 
 body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
   background-color: var(--app-bg-color);
   color: var(--app-text-color);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-
-#writingArea {
-  background-color: var(--writing-area-bg-color);
-  color: var(--writing-area-text-color);
-  caret-color: var(--accent-color);
-  padding-bottom: 2rem;
-}
-
-#markdownOutput {
-  color: var(--markdown-view-text-color);
 }
 
 #settingsPanel,
 #markdownShortcutsPanel {
-  /* Apply common styles to both panels */
   position: fixed;
   top: 0;
-  right: 0;
+  right: -420px;
+  width: 28%;
   height: 100%;
-  width: 18.75rem; /* 300px */
-  background-color: var(
-    --settings-panel-bg-color
-  ); /* Reuse setting panel background */
-  color: var(--settings-panel-text-color); /* Reuse setting panel text color */
-  box-shadow: -0.25rem 0 0.625rem rgba(0, 0, 0, 0.3); /* -4px 0 10px */
-  transform: translateX(100%);
-  transition: transform 0.3s ease-out;
   padding: 1.5rem;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-in-out;
   z-index: 100;
 }
 
 #settingsPanel.open,
 #markdownShortcutsPanel.open {
-  /* Apply open state to both panels */
-  transform: translateX(0);
+  right: 0;
 }
 
 #overlay {
@@ -63,15 +56,52 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 90;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#controlBar.control-bar-hidden {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-out;
+}
+
+#controlBar.control-bar-show {
+  transform: translateY(0);
+  transition: transform 0.3s ease-in;
+}
+
+#documentPanel {
+  max-width: var(--document-panel-max-width);
+}
+
+#writingArea {
+  font-size: var(--writing-area-font-size);
+  text-align: var(--writing-area-text-align);
+  background-color: var(--writing-area-bg-color);
+  color: var(--writing-area-text-color);
+}
+
+#markdownOutput {
+  background-color: var(--writing-area-bg-color);
+  color: var(--markdown-view-text-color);
+}
+
+#markdownOutput .prose {
+  font-size: var(--markdown-view-font-size);
+  text-align: var(--markdown-view-text-align);
 }
 
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 2.5rem; /* 40px */
-  height: 1.5rem; /* 24px */
+  width: 40px;
+  height: 24px;
 }
 
 .toggle-switch input {
@@ -87,19 +117,21 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #555;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
   transition: 0.4s;
-  border-radius: 1.5rem;
+  border-radius: 34px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 1rem;
-  width: 1rem;
-  left: 0.25rem;
-  bottom: 0.25rem;
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
   background-color: white;
+  -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 50%;
 }
@@ -109,49 +141,26 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 0.0625rem var(--accent-color); /* 1px */
+  box-shadow: 0 0 1px var(--accent-color);
 }
 
 input:checked + .slider:before {
-  transform: translateX(1rem);
+  -webkit-transform: translateX(16px);
+  -ms-transform: translateX(16px);
+  transform: translateX(16px);
 }
 
-.range-accent-color {
-  appearance: none;
-  background: var(--accent-color);
-  height: 0.25rem;
-  border-radius: 0.3125rem;
-  outline: none;
+.slider.round {
+  border-radius: 34px;
 }
 
-.range-accent-color::-webkit-slider-thumb,
-.range-accent-color::-moz-range-thumb {
-  width: 1rem;
-  height: 1rem;
-  background: var(--accent-color);
-  border: 0.125rem solid white;
+.slider.round:before {
   border-radius: 50%;
-  cursor: grab;
-  box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.3);
 }
 
-#controlBar {
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+input[type="range"].range-accent-color::-webkit-slider-thumb {
+  background: var(--accent-color);
 }
-
-.control-bar-hidden {
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
-}
-
-.control-bar-show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-#statusBar {
-  background-color: var(--writing-area-bg-color);
-  color: var(--accent-color);
+input[type="range"].range-accent-color::-moz-range-thumb {
+  background: var(--accent-color);
 }

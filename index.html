@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OwlWriter</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>" />
+    <link rel="icon" href="images/owl-icon.png" type="image/png" />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="style.css" />
@@ -13,7 +13,7 @@
     <div
       id="controlBarHoverTrigger"
       class="absolute top-0 left-0 w-full"
-      style="height: 100px; z-index: 40"
+      style="height: 40px; z-index: 40"
     ></div>
 
     <div id="overlay" class="hidden"></div>
@@ -81,9 +81,13 @@
         class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mr-2"
         title="Copy All Content"
       >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-      </svg>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -169,8 +173,12 @@
       </button>
     </div>
 
-    <div class="flex-grow flex items-center justify-center p-4 md:p-8 relative">
-      <div class="w-full max-w-4xl h-full flex flex-col">
+    <!-- Main content area container -->
+    <div
+      id="mainContentContainer"
+      class="flex-grow flex items-center justify-center p-4 md:p-8 relative"
+    >
+      <div id="documentPanel" class="w-full max-w-4xl h-full flex flex-col">
         <textarea
           id="writingArea"
           class="flex-grow p-6 md:p-10 leading-relaxed resize-none rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all duration-300 z-10"
@@ -317,6 +325,40 @@
       </h2>
 
       <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-3">Document Panel</h3>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Panel Width</label>
+            <button
+              id="resetDocumentPanelWidth"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <input
+              type="range"
+              id="documentPanelWidthSlider"
+              min="400"
+              max="1200"
+              value="896"
+              step="50"
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+            />
+            <span
+              id="documentPanelWidthValue"
+              class="text-sm font-semibold w-10 text-right"
+              >896px</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-lg font-semibold mb-3">Writing Area</h3>
 
         <div class="mb-4">
@@ -350,6 +392,59 @@
 
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Text Alignment</label>
+            <button
+              id="resetWritingAreaTextAlign"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner space-x-4"
+          >
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="writingAreaTextAlign"
+                value="left"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+                checked
+              />
+              <span class="ml-2 text-sm">Left</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="writingAreaTextAlign"
+                value="center"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Center</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="writingAreaTextAlign"
+                value="right"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Right</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="writingAreaTextAlign"
+                value="justify"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Justify</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium">Background Color</label>
             <button
               id="resetWritingAreaBgColor"
@@ -375,7 +470,7 @@
             <label class="block text-sm font-medium">Text Color</label>
             <button
               id="resetWritingAreaTextColor"
-              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-200"
             >
               Reset
             </button>
@@ -392,6 +487,93 @@
           </div>
         </div>
       </div>
+
+      <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-3">Markdown View</h3>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Font Size</label>
+            <button
+              id="resetMarkdownViewFontSize"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <input
+              type="range"
+              id="markdownViewFontSizeSlider"
+              min="12"
+              max="24"
+              value="16"
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+            />
+            <span
+              id="markdownViewFontSizeValue"
+              class="text-sm font-semibold w-10 text-right"
+              >16px</span
+            >
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Text Alignment</label>
+            <button
+              id="resetMarkdownViewTextAlign"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner space-x-4"
+          >
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="markdownViewTextAlign"
+                value="left"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+                checked
+              />
+              <span class="ml-2 text-sm">Left</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="markdownViewTextAlign"
+                value="center"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Center</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="markdownViewTextAlign"
+                value="right"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Right</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input
+                type="radio"
+                name="markdownViewTextAlign"
+                value="justify"
+                class="form-radio text-blue-600 focus:ring-blue-500"
+              />
+              <span class="ml-2 text-sm">Justify</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
       <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-lg font-semibold mb-3">App Style</h3>
 
