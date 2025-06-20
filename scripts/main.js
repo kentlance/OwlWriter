@@ -23,6 +23,9 @@ const settingsButton = document.getElementById("settingsButton");
 const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
 const closeSettingsButton = document.getElementById("closeSettingsButton");
+const closeMarkdownShortcutsButton = document.getElementById(
+  "closeMarkdownShortcutsButton"
+);
 
 const helpButton = document.getElementById("helpButton");
 const markdownShortcutsPanel = document.getElementById(
@@ -418,6 +421,10 @@ closeSettingsButton.addEventListener("click", () => {
   overlay.classList.add("hidden");
 });
 
+closeMarkdownShortcutsButton.addEventListener("click", () => {
+  markdownShortcutsPanel.classList.remove("open");
+  overlay.classList.add("hidden");
+});
 documentPanelWidthSlider.addEventListener("input", (e) => {
   currentDocumentPanelWidth = parseInt(e.target.value);
   applySettings();
