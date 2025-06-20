@@ -12,6 +12,11 @@ import {
 } from "./colors.js";
 
 import { initPresetsDropdown } from "./presets.js";
+import {
+  setupButtonOrder,
+  initializeSortableUI,
+  resetButtonOrderToDefault,
+} from "./buttonOrder.js";
 
 export const writingArea = document.getElementById("writingArea");
 export const markdownOutput = document.getElementById("markdownOutput");
@@ -160,6 +165,7 @@ const defaultSettings = {
   markdownViewTextAlign: "left",
   isWordCountVisible: true,
   hideControlBarOnHover: false,
+  controlBarButtonOpacity: 1,
 };
 
 // State Variables - loaded frpm localStorage
@@ -409,6 +415,7 @@ function resetAllToDefault() {
   hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
   currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
   resetAllColors();
+  resetButtonOrderToDefault();
   applySettings();
   saveSettings();
 }
@@ -459,7 +466,13 @@ writingArea.addEventListener("input", () => {
 });
 
 // Panel Toggles
-settingsButton.addEventListener("click", () => togglePanel(settingsPanel));
+settingsButton.addEventListener("click", () => {
+  togglePanel(settingsPanel); // toggle the panel's visibility
+  if (settingsPanel.classList.contains("open")) {
+    initializeSortableUI();
+  }
+});
+
 helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel));
 
 // Overlay click closes all panels
@@ -688,4 +701,5 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   applySettings();
   initPresetsDropdown();
+  setupButtonOrder();
 });

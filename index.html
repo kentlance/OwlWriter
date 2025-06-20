@@ -11,6 +11,7 @@
     />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="transition-colors duration-300 flex flex-col h-screen">
@@ -45,7 +46,10 @@
       </button>
       <input type="file" id="fileInput" accept=".txt,.md" class="hidden" />
 
-      <div class="relative inline-block text-left mr-2">
+      <div
+        id="exportButtonContainer"
+        class="relative inline-block text-left mr-2"
+      >
         <button
           id="exportButton"
           class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
@@ -875,36 +879,6 @@
 
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
-            <label class="block text-sm font-medium">Control Bar Opacity</label>
-            <button
-              id="resetControlBarButtonOpacity"
-              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
-            >
-              Reset
-            </button>
-          </div>
-          <div
-            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
-          >
-            <input
-              type="range"
-              id="controlBarButtonOpacitySlider"
-              min="0"
-              max="1"
-              value="1"
-              step="0.01"
-              class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
-            />
-            <span
-              id="controlBarButtonOpacityValue"
-              class="text-sm font-semibold w-10 text-right"
-              >100%</span
-            >
-          </div>
-        </div>
-
-        <div class="mb-4">
-          <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium">App Text Color</label>
             <button
               id="resetAppTextColor"
@@ -980,6 +954,52 @@
           </div>
         </div>
       </div>
+
+      <div class="mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <label class="block text-sm font-medium">Control Bar Opacity</label>
+          <button
+            id="resetControlBarButtonOpacity"
+            class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+          >
+            Reset
+          </button>
+        </div>
+        <div
+          class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+        >
+          <input
+            type="range"
+            id="controlBarButtonOpacitySlider"
+            min="0"
+            max="1"
+            value="1"
+            step="0.01"
+            class="w-full h-2 rounded-lg appearance-none cursor-pointer range-accent-color"
+          />
+          <span
+            id="controlBarButtonOpacityValue"
+            class="text-sm font-semibold w-10 text-right"
+            >100%</span
+          >
+        </div>
+      </div>
+
+      <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold">Control Bar Button Order</h3>
+          <button
+            id="resetButtonOrder"
+            class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+          >
+            Reset
+          </button>
+        </div>
+        <div
+          id="buttonOrderSettingsContainer"
+          class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex flex-col space-y-2"
+        ></div>
+      </div>
       <button
         id="resetAllColors"
         class="mt-6 w-full py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -993,5 +1013,6 @@
     <script type="module" src="scripts/export.js"></script>
     <script type="module" src="scripts/presets.js"></script>
     <script type="module" src="scripts/import.js"></script>
+    <script type="module" src="scripts/buttonOrder.js"></script>
   </body>
 </html>
