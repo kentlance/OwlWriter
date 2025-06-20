@@ -41,6 +41,17 @@ const controlBarHoverTrigger = document.getElementById(
   "controlBarHoverTrigger"
 );
 
+//Control Bar Opacity elements
+const controlBarButtonOpacitySlider = document.getElementById(
+  "controlBarButtonOpacitySlider"
+);
+const controlBarButtonOpacityValueSpan = document.getElementById(
+  "controlBarButtonOpacityValue"
+);
+const resetControlBarButtonOpacityButton = document.getElementById(
+  "resetControlBarButtonOpacity"
+);
+
 // Document Panel Width elements
 const documentPanel = document.getElementById("documentPanel");
 const documentPanelWidthSlider = document.getElementById(
@@ -163,6 +174,7 @@ let currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
 let markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
 let isWordCountVisible = defaultSettings.isWordCountVisible;
 let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
+let currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
 
 // Helper function to map font family keys to CSS font stacks
 const fontFamilyMap = {
@@ -193,7 +205,7 @@ export function showCopyMessage(message = "Content Copied!") {
 
   copyMessage.textContent = message;
 
-  void copyMessage.offsetWidth;
+  void copyMessage.offsetWidth; // Force reflow
 
   copyMessage.classList.add("opacity-100", "translate-y-0");
   copyMessage.classList.remove("opacity-0", "translate-y-full");
@@ -204,10 +216,6 @@ export function showCopyMessage(message = "Content Copied!") {
   }, 2000); // Message visible for 2 seconds
 }
 
-/**
- * Applies all current settings to the UI elements.
- * @exports applySettings
- */
 export function applySettings() {
   // Document Panel Width
   documentPanel.style.maxWidth = `${currentDocumentPanelWidth}px`;
@@ -274,6 +282,16 @@ export function applySettings() {
   // Apply Control Bar hover behavior
   applyControlBarHoverBehavior();
 
+  // Control Bar Button Opacity
+  document.documentElement.style.setProperty(
+    "--control-bar-button-opacity",
+    currentControlBarButtonOpacity
+  );
+  controlBarButtonOpacitySlider.value = currentControlBarButtonOpacity;
+  controlBarButtonOpacityValueSpan.textContent = `${Math.round(
+    currentControlBarButtonOpacity * 100
+  )}%`;
+
   applyAllColors(
     accentColorPicker,
     bgColorPicker,
@@ -296,7 +314,12 @@ export function saveSettings() {
   localStorage.setItem("markdownViewTextAlign", markdownViewTextAlign);
   localStorage.setItem("isWordCountVisible", isWordCountVisible);
   localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
+  localStorage.setItem(
+    "controlBarButtonOpacity",
+    currentControlBarButtonOpacity
+  );
 }
+
 export function loadSettings() {
   currentDocumentPanelWidth =
     parseInt(localStorage.getItem("documentPanelWidth")) ||
@@ -352,6 +375,10 @@ export function loadSettings() {
   } else {
     hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
   }
+
+  currentControlBarButtonOpacity =
+    parseFloat(localStorage.getItem("controlBarButtonOpacity")) ||
+    defaultSettings.controlBarButtonOpacity;
 }
 
 // Internal Functions
@@ -380,6 +407,7 @@ function resetAllToDefault() {
   markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
   isWordCountVisible = defaultSettings.isWordCountVisible;
   hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
+  currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
   resetAllColors();
   applySettings();
   saveSettings();
@@ -430,15 +458,18 @@ writingArea.addEventListener("input", () => {
   localStorage.setItem("savedContent", writingArea.value);
 });
 
+// Panel Toggles
 settingsButton.addEventListener("click", () => togglePanel(settingsPanel));
 helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel));
 
+// Overlay click closes all panels
 overlay.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   markdownShortcutsPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
 
+// Close buttons for panels
 closeSettingsButton.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   overlay.classList.add("hidden");
@@ -448,6 +479,7 @@ closeMarkdownShortcutsButton.addEventListener("click", () => {
   overlay.classList.add("hidden");
 });
 
+// Document Panel Width controls
 documentPanelWidthSlider.addEventListener("input", (e) => {
   currentDocumentPanelWidth = parseInt(e.target.value);
   applySettings();
@@ -459,6 +491,7 @@ resetDocumentPanelWidthButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Writing Area Font Family controls
 writingAreaFontFamilySelect.addEventListener("change", (e) => {
   writingAreaFontFamily = e.target.value;
   applySettings();
@@ -470,6 +503,7 @@ resetWritingAreaFontFamilyButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Font Size controls
 fontSizeSlider.addEventListener("input", (e) => {
   currentFontSize = parseInt(e.target.value);
   applySettings();
@@ -481,6 +515,7 @@ resetFontSizeButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Writing Area Text Align controls
 writingAreaTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     writingAreaTextAlign = e.target.value;
@@ -494,6 +529,7 @@ resetWritingAreaTextAlignButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Letter Spacing controls
 letterSpacingSlider.addEventListener("input", (e) => {
   currentLetterSpacing = parseFloat(e.target.value);
   applySettings();
@@ -505,6 +541,7 @@ resetLetterSpacingButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Line Height controls
 lineHeightSlider.addEventListener("input", (e) => {
   currentLineHeight = parseFloat(e.target.value);
   applySettings();
@@ -516,6 +553,7 @@ resetLineHeightButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Word Spacing controls
 wordSpacingSlider.addEventListener("input", (e) => {
   currentWordSpacing = parseFloat(e.target.value);
   applySettings();
@@ -527,6 +565,7 @@ resetWordSpacingButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Writing Area Background Color controls
 writingAreaBgColorPicker.addEventListener("input", (e) => {
   applyWritingAreaBgColor(e.target.value);
 });
@@ -536,6 +575,7 @@ resetWritingAreaBgColorButton.addEventListener("click", () => {
   writingAreaBgColorPicker.value = defaultColor;
 });
 
+// Writing Area Text Color controls
 writingAreaTextColorPicker.addEventListener("input", (e) => {
   applyWritingAreaTextColor(e.target.value);
 });
@@ -545,6 +585,7 @@ resetWritingAreaTextColorButton.addEventListener("click", () => {
   writingAreaTextColorPicker.value = defaultColor;
 });
 
+// Markdown View Font Size controls
 markdownViewFontSizeSlider.addEventListener("input", (e) => {
   currentMarkdownViewFontSize = parseInt(e.target.value);
   applySettings();
@@ -612,6 +653,19 @@ hideControlBarToggle.addEventListener("change", () => {
   hideControlBarOnHover = hideControlBarToggle.checked;
   localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
   applyControlBarHoverBehavior();
+});
+
+// Control Bar Button Opacity controls
+controlBarButtonOpacitySlider.addEventListener("input", (e) => {
+  currentControlBarButtonOpacity = parseFloat(e.target.value);
+  applySettings();
+  saveSettings();
+});
+
+resetControlBarButtonOpacityButton.addEventListener("click", () => {
+  currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
+  applySettings();
+  saveSettings();
 });
 
 // Initial Setup on Load

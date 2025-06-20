@@ -24,6 +24,8 @@
 
   --dropdown-bg-color: #b0d7ff;
   --dropdown-text-color: #1f2937;
+
+  --control-bar-button-opacity: 1;
 }
 
 .dark {
@@ -45,6 +47,11 @@ body {
     "Noto Color Emoji";
   background-color: var(--app-bg-color);
   color: var(--app-text-color);
+}
+
+.control-bar button {
+  opacity: var(--control-bar-button-opacity);
+  transition: opacity 0.3s ease;
 }
 
 #settingsPanel,
