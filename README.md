@@ -14,9 +14,19 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - **Export Options**: Export content as plain text (`.txt`), HTML (`.html`), or Markdown (`.md`).
 - **Persistent Settings**: Your work is saved locally in your browser. **Make  sure to save often!**
 
+## Soon
+- Multiple Pages
+    - Folders/Groups
+- Line highlighting (focused mode)
+- Fullscreen
+- Full offline support (use service workers)
+- Import and export settings
+- Formatting options popup on highlight
+
 ## Technologies Used
 
 - **HTML5**
 - **Tailwind CSS**
 - **JavaScript**
 - **Marked.js**
+- **SortableJS**
