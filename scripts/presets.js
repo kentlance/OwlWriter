@@ -52,29 +52,24 @@ const getRandomDynamicPlaceholder = () => {
   ];
 };
 
+const mapColorNames = (colors) => ({
+  accentColor: colors.accent,
+  appBgColor: colors.bg,
+  appTextColor: colors.text,
+  writingAreaBgColor: colors.writingAreaBg,
+  writingAreaTextColor: colors.writingAreaText,
+  markdownViewTextColor: colors.markdownViewText,
+});
+
 const presets = {
   Default: {
     // Reference defaultSettings directly from settings.js
     settings: defaultSettings,
-    colors: {
-      accentColor: defaultColors.dark.accent,
-      appBgColor: defaultColors.dark.bg,
-      appTextColor: defaultColors.dark.text,
-      writingAreaBgColor: defaultColors.dark.writingAreaBg,
-      writingAreaTextColor: defaultColors.dark.writingAreaText,
-      markdownViewTextColor: defaultColors.dark.markdownViewText,
-    },
+    colors: mapColorNames(defaultColors.dark),
   },
   Light: {
     settings: defaultSettings,
-    colors: {
-      accentColor: "#60a5fa",
-      appBgColor: "#ffffff",
-      appTextColor: "#adc9ff",
-      writingAreaBgColor: "#f9fafb",
-      writingAreaTextColor: "#1f2937",
-      markdownViewTextColor: "#1f2937",
-    },
+    colors: mapColorNames(defaultColors.light),
   },
   "Minimalist - Light": {
     settings: {
