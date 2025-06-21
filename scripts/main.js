@@ -77,6 +77,7 @@ const resetWritingAreaFontFamilyButton = document.getElementById(
   "resetWritingAreaFontFamily"
 );
 
+// Writing Area
 const fontSizeSlider = document.getElementById("fontSizeSlider");
 const fontSizeValueSpan = document.getElementById("fontSizeValue");
 const resetFontSizeButton = document.getElementById("resetFontSize");
@@ -114,6 +115,14 @@ const writingAreaTextColorPicker = document.getElementById(
 );
 const resetWritingAreaTextColorButton = document.getElementById(
   "resetWritingAreaTextColor"
+);
+
+// writing area placeholder
+const writingAreaPlaceholderInput = document.getElementById(
+  "writingAreaPlaceholderInput"
+);
+const resetWritingAreaPlaceholderButton = document.getElementById(
+  "resetWritingAreaPlaceholderButton"
 );
 
 const markdownViewFontSizeSlider = document.getElementById(
@@ -166,6 +175,11 @@ const defaultSettings = {
   isWordCountVisible: true,
   hideControlBarOnHover: false,
   controlBarButtonOpacity: 1,
+  writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
+  
+Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
+
+Write anything... `,
 };
 
 // State Variables - loaded frpm localStorage
@@ -181,6 +195,7 @@ let markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
 let isWordCountVisible = defaultSettings.isWordCountVisible;
 let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
 let currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
+let currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
 
 // Helper function to map font family keys to CSS font stacks
 const fontFamilyMap = {
@@ -270,6 +285,12 @@ export function applySettings() {
   wordSpacingSlider.value = currentWordSpacing;
   wordSpacingValueSpan.textContent = `${currentWordSpacing}px`;
 
+  // Writing Area Placeholder
+  writingArea.placeholder = currentWritingAreaPlaceholder;
+  if (writingAreaPlaceholderInput) {
+    writingAreaPlaceholderInput.value = currentWritingAreaPlaceholder;
+  }
+
   // Markdown View Font Size
   markdownOutput.style.fontSize = `${currentMarkdownViewFontSize}px`;
   markdownViewFontSizeValueSpan.textContent = `${currentMarkdownViewFontSize}px`;
@@ -324,6 +345,7 @@ export function saveSettings() {
     "controlBarButtonOpacity",
     currentControlBarButtonOpacity
   );
+  localStorage.setItem("writingAreaPlaceholder", currentWritingAreaPlaceholder);
 }
 
 export function loadSettings() {
@@ -385,6 +407,10 @@ export function loadSettings() {
   currentControlBarButtonOpacity =
     parseFloat(localStorage.getItem("controlBarButtonOpacity")) ||
     defaultSettings.controlBarButtonOpacity;
+
+  currentWritingAreaPlaceholder =
+    localStorage.getItem("writingAreaPlaceholder") ||
+    defaultSettings.writingAreaPlaceholder;
 }
 
 // Internal Functions
@@ -414,6 +440,7 @@ function resetAllToDefault() {
   isWordCountVisible = defaultSettings.isWordCountVisible;
   hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
   currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
+  currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
   resetAllColors();
   resetButtonOrderToDefault();
   applySettings();
@@ -596,6 +623,19 @@ resetWritingAreaTextColorButton.addEventListener("click", () => {
   const defaultColor = defaultColors[getSystemTheme()].writingAreaText;
   applyWritingAreaTextColor(defaultColor);
   writingAreaTextColorPicker.value = defaultColor;
+});
+
+// Writing Area Placeholder
+writingAreaPlaceholderInput.addEventListener("input", (e) => {
+  currentWritingAreaPlaceholder = e.target.value;
+  applySettings();
+  saveSettings();
+});
+
+resetWritingAreaPlaceholderButton.addEventListener("click", () => {
+  currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
+  applySettings();
+  saveSettings();
 });
 
 // Markdown View Font Size controls

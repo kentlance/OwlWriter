@@ -26,6 +26,31 @@ export {
   presetSelect,
 };
 
+const randomPlaceholders = [
+  "Start writing here...",
+  "One word at a time...",
+  "Type away!",
+  "Get creative!",
+  "What's on your mind?",
+  `"The poet doesn't invent. He listens." — Jean Cocteau`,
+  `"Nobody is a villain in their own story" — George R.R. Martin`,
+  `"There is no rule on how to write. Sometimes it comes easily and perfectly; sometimes it's like drilling rock and then blasting it out with charges." — Ernest Hemmingway`,
+  `"If I waited for perfection, I wouldn't write a thing" — Margaret Atwood`,
+  `"The thing about writing is if you really try, if you do it every day, and you put in your time, you get better." — Francis Ford Coppola`,
+  `"You must stay drunk on writing so reality cannot destroy you." — Ray Bradbury`,
+  `"Let me live, love, and say it well in good sentences." — Sylvia Plath`,
+  `"A word after a word after a word is power." — Margaret Atwood`,
+  `"Tears are words that need to be written." — Paul Coelho`,
+  `"There is no greater agony than bearing an untold story inside you." — Maya Angelou`,
+];
+
+// Get a random placeholder from the randomPlaceholders array
+const getRandomDynamicPlaceholder = () => {
+  return randomPlaceholders[
+    Math.floor(Math.random() * randomPlaceholders.length)
+  ];
+};
+
 const presets = {
   Default: {
     settings: {
@@ -40,6 +65,12 @@ const presets = {
       markdownViewTextAlign: "left",
       isWordCountVisible: true,
       hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
+ 
+Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
+      
+Write anything... `,
     },
     colors: {
       accentColor: defaultColors.dark.accent,
@@ -63,6 +94,12 @@ const presets = {
       markdownViewTextAlign: "left",
       isWordCountVisible: true,
       hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
+ 
+Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
+      
+Write anything... `,
     },
     colors: {
       accentColor: "#60a5fa",
@@ -86,6 +123,8 @@ const presets = {
       markdownViewTextAlign: "left",
       isWordCountVisible: false,
       hideControlBarOnHover: true,
+      controlBarButtonOpacity: 0.8,
+      writingAreaPlaceholder: " ",
     },
     colors: {
       accentColor: "#60a5fa",
@@ -109,6 +148,8 @@ const presets = {
       markdownViewTextAlign: "left",
       isWordCountVisible: false,
       hideControlBarOnHover: true,
+      controlBarButtonOpacity: 0.8,
+      writingAreaPlaceholder: " ",
     },
     colors: {
       accentColor: "#93c5fd",
@@ -132,6 +173,9 @@ const presets = {
       markdownViewTextAlign: "justify",
       isWordCountVisible: true,
       hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      // use naming convention "RANDOM_PLACEHOLDER_" + preset name to indicate a random placeholder on that preset
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_TEA",
     },
     colors: {
       accentColor: "#a3b18a",
@@ -155,6 +199,9 @@ const presets = {
       markdownViewTextAlign: "left",
       isWordCountVisible: true,
       hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      // use naming convention "RANDOM_PLACEHOLDER_" + preset name to indicate a random placeholder on that preset
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SKY",
     },
     colors: {
       accentColor: "#67e8f9",
@@ -174,10 +221,43 @@ export function applyPreset(presetName) {
     return;
   }
 
-  for (const key in preset.settings) {
-    localStorage.setItem(key, preset.settings[key]);
+  // Define all possible setting keys to ensure consistency and fallback to Default
+  const allSettingKeys = [
+    "documentPanelWidth",
+    "writingAreaFontFamily",
+    "fontSize",
+    "writingAreaTextAlign",
+    "letterSpacing",
+    "lineHeight",
+    "wordSpacing",
+    "markdownViewFontSize",
+    "markdownViewTextAlign",
+    "isWordCountVisible",
+    "hideControlBarOnHover",
+    "controlBarButtonOpacity",
+    "writingAreaPlaceholder",
+  ];
+
+  for (const key of allSettingKeys) {
+    let valueToSet;
+    // Check if the current preset's placeholder is one of the ones that need random placeholder
+    if (
+      key === "writingAreaPlaceholder" &&
+      (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
+        preset.settings[key] === "RANDOM_PLACEHOLDER_SKY")
+    ) {
+      valueToSet = getRandomDynamicPlaceholder(); // Generate a random one
+    } else {
+      // Otherwise, use the preset's value or fallback to Default if not defined
+      valueToSet =
+        preset.settings[key] !== undefined
+          ? preset.settings[key]
+          : presets.Default.settings[key];
+    }
+    localStorage.setItem(key, valueToSet);
   }
 
+  // Apply colors from the preset
   for (const key in preset.colors) {
     localStorage.setItem(key, preset.colors[key]);
   }
@@ -185,6 +265,7 @@ export function applyPreset(presetName) {
   loadSettings();
   applySettings();
 
+  // Update color picker values in the settings panel to reflect the preset colors
   accentColorPicker.value =
     localStorage.getItem("accentColor") ||
     defaultColors[getSystemTheme()].accent;
@@ -214,7 +295,11 @@ export function initPresetsDropdown() {
     return;
   }
 
+  // Clear existing options before adding to prevent duplicates on re-init
+  presetSelect.innerHTML = "";
+
   for (const name in presets) {
+    // Only add the explicit presets defined in the `presets` object
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;
@@ -226,6 +311,7 @@ export function initPresetsDropdown() {
   customOption.textContent = "Custom";
   presetSelect.appendChild(customOption);
 
+  // Set the initial value of the dropdown based on current settings
   presetSelect.value = getCurrentPresetName();
 
   presetSelect.addEventListener("change", (e) => {
@@ -235,21 +321,44 @@ export function initPresetsDropdown() {
 
 export function getCurrentPresetName() {
   const currentSettingsFromLS = {};
-  for (const key of Object.keys(presets.Default.settings)) {
+  // Define all possible setting keys. This ensures we check all settings for a match.
+  const allSettingKeys = [
+    "documentPanelWidth",
+    "writingAreaFontFamily",
+    "fontSize",
+    "writingAreaTextAlign",
+    "letterSpacing",
+    "lineHeight",
+    "wordSpacing",
+    "markdownViewFontSize",
+    "markdownViewTextAlign",
+    "isWordCountVisible",
+    "hideControlBarOnHover",
+    "controlBarButtonOpacity",
+    "writingAreaPlaceholder",
+  ];
+
+  // Get current settings from localStorage or fallback to Default preset's values
+  for (const key of allSettingKeys) {
     const value = localStorage.getItem(key);
+    // Use the default value from the 'Default' preset for type reference and fallback
+    const defaultValue = presets.Default.settings[key];
+
     if (value !== null) {
-      if (typeof presets.Default.settings[key] === "boolean") {
+      if (typeof defaultValue === "boolean") {
         currentSettingsFromLS[key] = value === "true";
-      } else if (typeof presets.Default.settings[key] === "number") {
+      } else if (typeof defaultValue === "number") {
         currentSettingsFromLS[key] = parseFloat(value);
       } else {
         currentSettingsFromLS[key] = value;
       }
     } else {
-      currentSettingsFromLS[key] = presets.Default.settings[key];
+      // If not in localStorage, use the default from the 'Default' preset
+      currentSettingsFromLS[key] = defaultValue;
     }
   }
 
+  // Get current colors from localStorage or default
   const currentColorsFromLS = {};
   for (const key of Object.keys(presets.Default.colors)) {
     const value = localStorage.getItem(key);
@@ -259,11 +368,47 @@ export function getCurrentPresetName() {
         : defaultColors[getSystemTheme()][key.replace("Color", "")];
   }
 
+  // Compare current settings and colors against each defined preset
   for (const presetName in presets) {
     const preset = presets[presetName];
 
     let settingsMatch = true;
     for (const key in preset.settings) {
+      // Special handling for writingAreaPlaceholder when it's meant to be random
+      if (
+        key === "writingAreaPlaceholder" &&
+        (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
+          preset.settings[key] === "RANDOM_PLACEHOLDER_SKY")
+      ) {
+        const currentPlaceholder = currentSettingsFromLS[key];
+
+        // Check if the current placeholder matches any *fixed* placeholder from *any other preset*
+        const isCurrentPlaceholderFixedInOtherPreset = Object.keys(
+          presets
+        ).some((otherPresetName) => {
+          if (otherPresetName === presetName) return false; // Don't compare against itself
+          const otherPreset = presets[otherPresetName];
+          const otherPresetPlaceholder =
+            otherPreset.settings.writingAreaPlaceholder;
+          // Only compare if the other preset's placeholder is *not* a random chosen placeholder
+          return (
+            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_TEA" &&
+            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SKY" &&
+            otherPresetPlaceholder === currentPlaceholder
+          );
+        });
+
+        if (isCurrentPlaceholderFixedInOtherPreset) {
+          // If the current placeholder IS a fixed one from another preset, then this random-placeholder preset does NOT match.
+          settingsMatch = false;
+          break;
+        }
+        // If it's NOT a fixed placeholder from another preset, it *could* be
+        // a random one set by this preset, so we allow it to proceed as a match for this key.
+        continue; // Skip direct value comparison
+      }
+
+      // Perform direct comparison for all other settings
       if (currentSettingsFromLS[key] !== preset.settings[key]) {
         settingsMatch = false;
         break;
@@ -272,6 +417,7 @@ export function getCurrentPresetName() {
 
     let colorsMatch = true;
     if (settingsMatch) {
+      // Only check colors if settings match so far
       for (const key in preset.colors) {
         if (currentColorsFromLS[key] !== preset.colors[key]) {
           colorsMatch = false;
@@ -281,9 +427,9 @@ export function getCurrentPresetName() {
     }
 
     if (settingsMatch && colorsMatch) {
-      return presetName;
+      return presetName; // Found a matching preset
     }
   }
 
-  return "Custom";
+  return "Custom"; // No matching preset found
 }

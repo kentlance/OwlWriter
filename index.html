@@ -207,11 +207,10 @@
       id="mainContentContainer"
       class="flex-grow flex items-center justify-center p-4 md:p-8 relative"
     >
-      <div id="documentPanel" class="w-full max-w-4xl h-full flex flex-col">
+      <div id="documentPanel" class="w-full h-full flex flex-col">
         <textarea
           id="writingArea"
           class="flex-grow p-6 md:p-10 leading-relaxed resize-none rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all duration-300 z-10"
-          placeholder="Write anything..."
         ></textarea>
 
         <div
@@ -738,6 +737,31 @@
               class="w-full h-10 border border-gray-300 dark:border-gray-700 rounded-md cursor-pointer"
               value="#f0f0f0"
             />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label
+              for="writingAreaPlaceholderInput"
+              class="block text-sm font-medium"
+              >Placeholder Text</label
+            >
+            <button
+              id="resetWritingAreaPlaceholderButton"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex items-center space-x-2"
+          >
+            <textarea
+              type="text"
+              id="writingAreaPlaceholderInput"
+              class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-color dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+            ></textarea>
           </div>
         </div>
       </div>

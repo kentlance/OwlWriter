@@ -11,7 +11,8 @@
   --markdown-view-font-size: 16px;
   --markdown-view-text-align: left;
 
-  --document-panel-max-width: 896px;
+  --document-panel-max-width: 1200px;
+  --document-panel-width: 90%;
 
   --writing-area-font-family: ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
@@ -113,6 +114,7 @@ body {
 
 #documentPanel {
   max-width: var(--document-panel-max-width);
+  width: var(--document-panel-width);
 }
 
 #writingArea {
@@ -129,6 +131,7 @@ body {
 #markdownOutput {
   background-color: var(--writing-area-bg-color);
   color: var(--markdown-view-text-color);
+  max-width: 100% !important;
 }
 
 #markdownOutput .prose {
