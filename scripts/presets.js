@@ -66,10 +66,7 @@ const presets = {
     },
   },
   Light: {
-    settings: {
-      ...defaultSettings,
-      lineHeight: 1.6, // Only override this one property
-    },
+    settings: defaultSettings,
     colors: {
       accentColor: "#60a5fa",
       appBgColor: "#ffffff",
