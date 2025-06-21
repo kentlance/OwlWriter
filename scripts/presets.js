@@ -1,4 +1,5 @@
 import { applySettings, loadSettings, saveSettings } from "./main.js";
+import { defaultSettings } from "./settings.js";
 import { applyAllColors, defaultColors, getSystemTheme } from "./colors.js";
 
 const presetSelect = document.getElementById("presetSelect");
@@ -53,25 +54,8 @@ const getRandomDynamicPlaceholder = () => {
 
 const presets = {
   Default: {
-    settings: {
-      documentPanelWidth: 896,
-      writingAreaFontFamily: "serif",
-      fontSize: 18,
-      writingAreaTextAlign: "left",
-      letterSpacing: 0,
-      lineHeight: 1.5,
-      wordSpacing: 0,
-      markdownViewFontSize: 16,
-      markdownViewTextAlign: "left",
-      isWordCountVisible: true,
-      hideControlBarOnHover: false,
-      controlBarButtonOpacity: 1,
-      writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
- 
-Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
-      
-Write anything... `,
-    },
+    // Reference defaultSettings directly from settings.js
+    settings: defaultSettings,
     colors: {
       accentColor: defaultColors.dark.accent,
       appBgColor: defaultColors.dark.bg,
@@ -83,23 +67,8 @@ Write anything... `,
   },
   Light: {
     settings: {
-      documentPanelWidth: 896,
-      writingAreaFontFamily: "serif",
-      fontSize: 18,
-      writingAreaTextAlign: "left",
-      letterSpacing: 0,
-      lineHeight: 1.6,
-      wordSpacing: 0,
-      markdownViewFontSize: 16,
-      markdownViewTextAlign: "left",
-      isWordCountVisible: true,
-      hideControlBarOnHover: false,
-      controlBarButtonOpacity: 1,
-      writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
- 
-Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
-      
-Write anything... `,
+      ...defaultSettings,
+      lineHeight: 1.6, // Only override this one property
     },
     colors: {
       accentColor: "#60a5fa",

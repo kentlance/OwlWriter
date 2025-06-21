@@ -2,10 +2,10 @@ export const defaultColors = {
   light: {
     accent: "#2196f3",
     bg: "#f3f4f6",
-    text: "#1f2937",
+    text: "#2196f3",
     writingAreaBg: "#ffffff",
     writingAreaText: "#1f2937",
-    markdownViewText: "#1f2937",
+    markdownViewText: "#000",
   },
   dark: {
     accent: "#64b5f6",
