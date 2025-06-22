@@ -18,7 +18,7 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - Multiple Pages
     - Folders/Groups
 - Line highlighting (focused mode)
-- Fullscreen
+- ~~Fullscreen~~ - implemented!
 - Full offline support (use service workers)
 - Import and export settings
 - Formatting options popup on highlight
@@ -30,3 +30,5 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - **JavaScript**
 - **Marked.js**
 - **SortableJS**
+
+Special thanks to HeroIcons for the icons!
