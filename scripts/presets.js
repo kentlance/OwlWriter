@@ -124,7 +124,7 @@ const presets = {
   Tea: {
     settings: {
       documentPanelWidth: 800,
-      writingAreaFontFamily: "serif",
+      writingAreaFontFamily: "libre-baskerville", // CHANGED: From "serif" to "libre-baskerville"
       fontSize: 19,
       writingAreaTextAlign: "justify",
       letterSpacing: 0.02,
@@ -150,7 +150,7 @@ const presets = {
   Sky: {
     settings: {
       documentPanelWidth: 900,
-      writingAreaFontFamily: "inter",
+      writingAreaFontFamily: "raleway", // CHANGED: From "inter" to "raleway"
       fontSize: 17,
       writingAreaTextAlign: "left",
       letterSpacing: 0,
@@ -161,7 +161,6 @@ const presets = {
       isWordCountVisible: true,
       hideControlBarOnHover: false,
       controlBarButtonOpacity: 1,
-      // use naming convention "RANDOM_PLACEHOLDER_" + preset name to indicate a random placeholder on that preset
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SKY",
     },
     colors: {
@@ -171,6 +170,81 @@ const presets = {
       writingAreaBgColor: "#ffffff",
       writingAreaTextColor: "#083344",
       markdownViewTextColor: "#083344",
+    },
+  },
+  Sakura: {
+    settings: {
+      documentPanelWidth: 850,
+      writingAreaFontFamily: "amethysta", // CHANGED: From "serif" to "amethysta"
+      fontSize: 18,
+      writingAreaTextAlign: "left",
+      letterSpacing: 0.01,
+      lineHeight: 1.6,
+      wordSpacing: 0,
+      markdownViewFontSize: 17,
+      markdownViewTextAlign: "left",
+      isWordCountVisible: true,
+      hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SAKURA",
+    },
+    colors: {
+      accentColor: "#f9a8d4",
+      appBgColor: "#ffe4e6",
+      appTextColor: "#ff7070",
+      writingAreaBgColor: "#fff0f5",
+      writingAreaTextColor: "#31242c",
+      markdownViewTextColor: "#31242c",
+    },
+  },
+  Sunset: {
+    settings: {
+      documentPanelWidth: 950,
+      writingAreaFontFamily: "nunito",
+      fontSize: 17,
+      writingAreaTextAlign: "center",
+      letterSpacing: 0,
+      lineHeight: 1.5,
+      wordSpacing: 0,
+      markdownViewFontSize: 17,
+      markdownViewTextAlign: "center",
+      isWordCountVisible: true,
+      hideControlBarOnHover: true,
+      controlBarButtonOpacity: 0.9,
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SUNSET",
+    },
+    colors: {
+      accentColor: "#fcd34d",
+      appBgColor: "#fdba74",
+      appTextColor: "#6d28d9",
+      writingAreaBgColor: "#fef3c7",
+      writingAreaTextColor: "#7f1d1d",
+      markdownViewTextColor: "#7f1d1d",
+    },
+  },
+  Cream: {
+    settings: {
+      documentPanelWidth: 800,
+      writingAreaFontFamily: "quicksand", // CHANGED: From "inter" to "quicksand"
+      fontSize: 19,
+      writingAreaTextAlign: "left",
+      letterSpacing: 0,
+      lineHeight: 1.7,
+      wordSpacing: 0,
+      markdownViewFontSize: 18,
+      markdownViewTextAlign: "left",
+      isWordCountVisible: false,
+      hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_CREAM",
+    },
+    colors: {
+      accentColor: "#d9f99d",
+      appBgColor: "#fffbed",
+      appTextColor: "#374151",
+      writingAreaBgColor: "#fdfae7",
+      writingAreaTextColor: "#374151",
+      markdownViewTextColor: "#374151",
     },
   },
 };
@@ -205,7 +279,10 @@ export function applyPreset(presetName) {
     if (
       key === "writingAreaPlaceholder" &&
       (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
-        preset.settings[key] === "RANDOM_PLACEHOLDER_SKY")
+        preset.settings[key] === "RANDOM_PLACEHOLDER_SKY" ||
+        preset.settings[key] === "RANDOM_PLACEHOLDER_SAKURA" ||
+        preset.settings[key] === "RANDOM_PLACEHOLDER_SUNSET" ||
+        preset.settings[key] === "RANDOM_PLACEHOLDER_CREAM")
     ) {
       valueToSet = getRandomDynamicPlaceholder(); // Generate a random one
     } else {
@@ -339,7 +416,10 @@ export function getCurrentPresetName() {
       if (
         key === "writingAreaPlaceholder" &&
         (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
-          preset.settings[key] === "RANDOM_PLACEHOLDER_SKY")
+          preset.settings[key] === "RANDOM_PLACEHOLDER_SKY" ||
+          preset.settings[key] === "RANDOM_PLACEHOLDER_SAKURA" ||
+          preset.settings[key] === "RANDOM_PLACEHOLDER_SUNSET" ||
+          preset.settings[key] === "RANDOM_PLACEHOLDER_CREAM")
       ) {
         const currentPlaceholder = currentSettingsFromLS[key];
 
@@ -355,6 +435,9 @@ export function getCurrentPresetName() {
           return (
             otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_TEA" &&
             otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SKY" &&
+            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SAKURA" &&
+            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SUNSET" &&
+            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_CREAM" &&
             otherPresetPlaceholder === currentPlaceholder
           );
         });

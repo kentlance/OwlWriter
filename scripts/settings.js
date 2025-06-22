@@ -14,6 +14,8 @@ export const defaultSettings = {
   writingAreaPlaceholder: `This is a minimalist writing app with a fully customizable interface. Click on settings (top right) to see all the options!
   
   Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
+
+  Your work is saved locally on your browser, so make sure to save often!
   
   Write anything... `,
 };

@@ -12,6 +12,13 @@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amethysta&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;700&family=Outfit:wght@400;700&family=Quicksand:wght@400;700&family=Raleway:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="transition-colors duration-300 flex flex-col h-screen">
@@ -45,7 +52,6 @@
         </svg>
       </button>
       <input type="file" id="fileInput" accept=".txt,.md" class="hidden" />
-
       <div
         id="exportButtonContainer"
         class="relative inline-block text-left mr-2"
@@ -172,6 +178,27 @@
             stroke-linejoin="round"
             d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
           />
+        </svg>
+      </button>
+
+      <button
+        id="fullScreenToggleButton"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mr-2"
+        title="Toggle Fullscreen"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5"
+          ></path>
         </svg>
       </button>
 
@@ -520,6 +547,14 @@
               <option value="inter">Inter</option>
               <option value="serif" selected>Serif</option>
               <option value="monospace">Monospace</option>
+              <option value="roboto">Roboto</option>
+              <option value="merriweather">Merriweather</option>
+              <option value="raleway">Raleway</option>
+              <option value="nunito">Nunito</option>
+              <option value="quicksand">Quicksand</option>
+              <option value="outfit">Outfit</option>
+              <option value="libre-baskerville">Libre Baskerville</option>
+              <option value="amethysta">Amethysta</option>
             </select>
           </div>
         </div>

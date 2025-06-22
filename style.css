@@ -48,6 +48,31 @@ body {
     "Noto Color Emoji";
   background-color: var(--app-bg-color);
   color: var(--app-text-color);
+
+  transition: background-color 0.3s ease, color 0.3s ease;
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack control bar, document panel, status bar vertically */
+}
+
+#documentPanel {
+  flex-grow: 1; /* Make documentPanel take all available vertical space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: var(--document-panel-max-width);
+  width: var(--document-panel-width);
+  /* Add transition for smoother resizing */
+  transition: max-width 0.3s ease, width 0.3s ease, padding 0.3s ease;
+}
+
+#writingArea,
+#markdownOutput {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  flex-grow: 1;
 }
 
 .control-bar button {
@@ -65,7 +90,7 @@ body {
   padding: 1.5rem;
   box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease-in-out;
-  z-index: 100;
+  z-index: 99999;
   color: var(--app-text-color);
 }
 
@@ -93,7 +118,7 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 90;
+  z-index: 9990;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -110,11 +135,6 @@ body {
 #controlBar.control-bar-show {
   transform: translateY(0);
   transition: transform 0.3s ease-in;
-}
-
-#documentPanel {
-  max-width: var(--document-panel-max-width);
-  width: var(--document-panel-width);
 }
 
 #writingArea {

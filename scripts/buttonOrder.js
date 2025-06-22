@@ -5,6 +5,7 @@ const DEFAULT_BUTTON_ORDER = [
   "copyAllButton",
   "markdownViewButton",
   "helpButton",
+  "fullScreenToggleButton",
   "settingsButton",
 ];
 
@@ -17,6 +18,7 @@ const BUTTON_NAMES = {
   copyAllButton: "Copy All",
   markdownViewButton: "Toggle Markdown View",
   helpButton: "Markdown Shortcuts",
+  fullScreenToggleButton: "Toggle Fullscreen",
   settingsButton: "Settings",
 };
 

@@ -163,6 +163,10 @@ const wordCountToggleCheckbox = document.getElementById(
   "wordCountToggleCheckbox"
 );
 
+const fullScreenToggleButton = document.getElementById(
+  "fullScreenToggleButton"
+);
+
 // State Variables - loaded frpm localStorage
 let currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
 let writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
@@ -177,6 +181,7 @@ let isWordCountVisible = defaultSettings.isWordCountVisible;
 let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
 let currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
 let currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
+let isFullScreen = false;
 
 // Helper function to map font family keys to CSS font stacks
 const fontFamilyMap = {
@@ -187,6 +192,22 @@ const fontFamilyMap = {
   serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
   monospace:
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+  roboto:
+    'Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  merriweather:
+    'Merriweather, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  raleway:
+    'Raleway, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  nunito:
+    'Nunito, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  quicksand:
+    'Quicksand, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  outfit:
+    'Outfit, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  "libre-baskerville":
+    '"Libre Baskerville", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  amethysta:
+    'Amethysta, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
 };
 
 export function updateCounts() {
@@ -467,6 +488,65 @@ function applyControlBarHoverBehavior() {
   hideControlBarToggle.checked = hideControlBarOnHover;
 }
 
+// Fullscreen functions
+function enterFullScreen() {
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+  } else if (document.documentElement.mozRequestFullScreen) {
+    // Firefox
+    document.documentElement.mozRequestFullScreen();
+  } else if (document.documentElement.webkitRequestFullscreen) {
+    // Chrome, Safari and Opera
+    document.documentElement.webkitRequestFullscreen();
+  } else if (document.documentElement.msRequestFullscreen) {
+    // IE/Edge
+    document.documentElement.msRequestFullscreen();
+  }
+}
+
+function exitFullScreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    // Firefox
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    // Chrome, Safari and Opera
+    document.webkitExitFullScreen();
+  } else if (document.msExitFullscreen) {
+    // IE/Edge
+    document.msExitFullscreen();
+  }
+}
+
+function updateFullScreenIcon() {
+  const iconSvg = fullScreenToggleButton.querySelector("svg");
+  if (!iconSvg) return;
+
+  const expandPath =
+    "M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15";
+  const compressPath =
+    "M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25";
+
+  // Check if currently in fullscreen
+  if (
+    document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  ) {
+    // Currently in fullscreen, show compress icon
+    iconSvg.querySelector("path").setAttribute("d", compressPath);
+    document.body.classList.add("fullscreen-active"); // Apply a class to body for potential styling adjustments in fullscreen
+    isFullScreen = true;
+  } else {
+    // Not in fullscreen, show expand icon
+    iconSvg.querySelector("path").setAttribute("d", expandPath);
+    document.body.classList.remove("fullscreen-active"); // Remove the class
+    isFullScreen = false;
+  }
+}
+
 // Event Listeners
 writingArea.addEventListener("input", () => {
   updateCounts();
@@ -702,6 +782,21 @@ resetControlBarButtonOpacityButton.addEventListener("click", () => {
   saveSettings();
 });
 
+// Fullscreen Event Listener
+fullScreenToggleButton.addEventListener("click", () => {
+  if (document.fullscreenElement) {
+    exitFullScreen();
+  } else {
+    enterFullScreen();
+  }
+});
+
+// Listen for fullscreen changes (user presses Esc)
+document.addEventListener("fullscreenchange", updateFullScreenIcon);
+document.addEventListener("mozfullscreenchange", updateFullScreenIcon);
+document.addEventListener("webkitfullscreenchange", updateFullScreenIcon);
+document.addEventListener("msfullscreenchange", updateFullScreenIcon);
+
 // Initial Setup on Load
 document.addEventListener("DOMContentLoaded", () => {
   // Load saved content
@@ -723,4 +818,5 @@ document.addEventListener("DOMContentLoaded", () => {
   applySettings();
   initPresetsDropdown();
   setupButtonOrder();
+  updateFullScreenIcon();
 });
