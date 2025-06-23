@@ -1,12 +1,6 @@
 import {
   defaultColors,
   getSystemTheme,
-  applyAccentColor,
-  applyAppBgColor,
-  applyAppTextColor,
-  applyWritingAreaBgColor,
-  applyWritingAreaTextColor,
-  applyMarkdownViewTextColor,
   applyAllColors,
   resetAllColors,
 } from "./colors.js";
@@ -14,12 +8,15 @@ import {
 // Import defaultSettings from settings.js
 import { defaultSettings } from "./settings.js";
 
-import { initPresetsDropdown } from "./presets.js";
+import { initPresetsDropdown, presetSelect } from "./presets.js";
+
 import {
   setupButtonOrder,
   initializeSortableUI,
   resetButtonOrderToDefault,
 } from "./buttonOrder.js";
+
+import { setupExportImportFeatures } from "./exportImportTheme.js";
 
 export const writingArea = document.getElementById("writingArea");
 export const markdownOutput = document.getElementById("markdownOutput");
@@ -128,6 +125,10 @@ const resetWritingAreaPlaceholderButton = document.getElementById(
   "resetWritingAreaPlaceholderButton"
 );
 
+const useRandomPlaceholderToggle = document.getElementById(
+  "useRandomPlaceholderToggle"
+);
+
 const markdownViewFontSizeSlider = document.getElementById(
   "markdownViewFontSizeSlider"
 );
@@ -185,7 +186,11 @@ export function updateSetting(key, value) {
   if (key === "showMarkdownPopup") {
     document.dispatchEvent(new Event("selectionchange"));
   }
-  applySettings();
+  // Only call applySettings for non-color changes.
+  // Color changes will trigger applyAllColors directly from their event listeners.
+  if (!key.includes("Color")) {
+    applySettings();
+  }
 }
 
 // Helper function to map font family keys to CSS font stacks
@@ -193,7 +198,7 @@ const fontFamilyMap = {
   "system-sans":
     'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   inter:
-    'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
   monospace:
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
@@ -293,9 +298,21 @@ export function applySettings() {
   wordSpacingValueSpan.textContent = `${appSettings.wordSpacing}px`;
 
   // Writing Area Placeholder
-  writingArea.placeholder = appSettings.writingAreaPlaceholder;
   if (writingAreaPlaceholderInput) {
-    writingAreaPlaceholderInput.value = appSettings.writingAreaPlaceholder;
+    if (appSettings.useRandomPlaceholder) {
+      writingAreaPlaceholderInput.value = ""; // Clear the specific text input
+      writingAreaPlaceholderInput.disabled = true; // Disable it
+    } else {
+      writingAreaPlaceholderInput.value = appSettings.writingAreaPlaceholder;
+      writingAreaPlaceholderInput.disabled = false;
+    }
+  }
+  // Set the writing area's actual placeholder text from appSettings
+  writingArea.placeholder = appSettings.writingAreaPlaceholder;
+
+  // Use Random Placeholder Toggle state
+  if (useRandomPlaceholderToggle) {
+    useRandomPlaceholderToggle.checked = appSettings.useRandomPlaceholder;
   }
 
   // Markdown View Font Size
@@ -353,16 +370,17 @@ export function loadSettings() {
   Object.assign(appSettings, defaultSettings, savedSettings);
 
   // For boolean values stored as strings, convert them if necessary
-  if (typeof appSettings.isWordCountVisible === "string") {
-    appSettings.isWordCountVisible = appSettings.isWordCountVisible === "true";
-  }
-  if (typeof appSettings.hideControlBarOnHover === "string") {
-    appSettings.hideControlBarOnHover =
-      appSettings.hideControlBarOnHover === "true";
-  }
-  if (typeof appSettings.showMarkdownPopup === "string") {
-    appSettings.showMarkdownPopup = appSettings.showMarkdownPopup === "true";
-  }
+  const booleanKeys = [
+    "isWordCountVisible",
+    "hideControlBarOnHover",
+    "showMarkdownPopup",
+    "useRandomPlaceholder",
+  ];
+  booleanKeys.forEach((key) => {
+    if (typeof appSettings[key] === "string") {
+      appSettings[key] = appSettings[key] === "true";
+    }
+  });
 }
 
 // Internal Functions
@@ -389,7 +407,8 @@ function resetAllToDefault() {
   // Other specific resets
   resetButtonOrderToDefault();
 
-  applySettings(); // Apply all changes to the UI
+  // After resetting, apply all settings and colors to the UI
+  applySettings();
   saveSettings(); // Save the default settings to localStorage
 }
 
@@ -434,6 +453,7 @@ function applyControlBarHoverBehavior() {
 }
 
 // Fullscreen functions
+let isFullScreen = false;
 function enterFullScreen() {
   if (document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen();
@@ -457,7 +477,7 @@ function exitFullScreen() {
     document.mozCancelFullScreen();
   } else if (document.webkitExitFullscreen) {
     // Chrome, Safari and Opera
-    document.webkitExitFullScreen();
+    document.webkitExitFullscreen();
   } else if (document.msExitFullscreen) {
     // IE/Edge
     document.msExitFullscreen();
@@ -583,33 +603,163 @@ resetWordSpacingButton.addEventListener("click", () => {
   updateSetting("wordSpacing", defaultSettings.wordSpacing);
 });
 
+// Color Even Listeners
 // Writing Area Background Color controls
 writingAreaBgColorPicker.addEventListener("input", (e) => {
-  updateSetting("writingAreaBgColor", e.target.value);
-  applyWritingAreaBgColor(e.target.value);
+  localStorage.setItem("writingAreaBgColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
 });
 resetWritingAreaBgColorButton.addEventListener("click", () => {
   const defaultColor = defaultColors[getSystemTheme()].writingAreaBg;
-  updateSetting("writingAreaBgColor", defaultColor);
-  applyWritingAreaBgColor(defaultColor);
-  writingAreaBgColorPicker.value = defaultColor;
+  localStorage.setItem("writingAreaBgColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
 });
 
 // Writing Area Text Color controls
 writingAreaTextColorPicker.addEventListener("input", (e) => {
-  updateSetting("writingAreaTextColor", e.target.value);
-  applyWritingAreaTextColor(e.target.value);
+  localStorage.setItem("writingAreaTextColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
 });
 resetWritingAreaTextColorButton.addEventListener("click", () => {
   const defaultColor = defaultColors[getSystemTheme()].writingAreaText;
-  updateSetting("writingAreaTextColor", defaultColor);
-  applyWritingAreaTextColor(defaultColor);
-  writingAreaTextColorPicker.value = defaultColor;
+  localStorage.setItem("writingAreaTextColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+
+// Accent Color controls
+accentColorPicker.addEventListener("input", (e) => {
+  localStorage.setItem("accentColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+resetAccentColorButton.addEventListener("click", () => {
+  const defaultColor = defaultColors[getSystemTheme()].accent;
+  localStorage.setItem("accentColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+
+// Background Color controls
+bgColorPicker.addEventListener("input", (e) => {
+  localStorage.setItem("appBgColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+resetBgColorButton.addEventListener("click", () => {
+  const defaultColor = defaultColors[getSystemTheme()].bg;
+  localStorage.setItem("appBgColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+
+// App Text Color controls
+appTextColorPicker.addEventListener("input", (e) => {
+  localStorage.setItem("appTextColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+resetAppTextColorButton.addEventListener("click", () => {
+  const defaultColor = defaultColors[getSystemTheme()].text;
+  localStorage.setItem("appTextColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+
+// Markdown View Text Color controls
+markdownViewTextColorPicker.addEventListener("input", (e) => {
+  localStorage.setItem("markdownViewTextColor", e.target.value);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
+});
+resetMarkdownViewTextColorButton.addEventListener("click", () => {
+  const defaultColor = defaultColors[getSystemTheme()].markdownViewText;
+  localStorage.setItem("markdownViewTextColor", defaultColor);
+  applyAllColors(
+    accentColorPicker,
+    bgColorPicker,
+    appTextColorPicker,
+    writingAreaBgColorPicker,
+    writingAreaTextColorPicker,
+    markdownViewTextColorPicker
+  );
 });
 
 // Writing Area Placeholder
 writingAreaPlaceholderInput.addEventListener("input", (e) => {
-  updateSetting("writingAreaPlaceholder", e.target.value);
+  // Only update placeholder text if random placeholder is NOT active
+  if (!appSettings.useRandomPlaceholder) {
+    updateSetting("writingAreaPlaceholder", e.target.value);
+  }
 });
 
 resetWritingAreaPlaceholderButton.addEventListener("click", () => {
@@ -617,7 +767,19 @@ resetWritingAreaPlaceholderButton.addEventListener("click", () => {
     "writingAreaPlaceholder",
     defaultSettings.writingAreaPlaceholder
   );
+  // reset the random placeholder toggle
+  updateSetting("useRandomPlaceholder", defaultSettings.useRandomPlaceholder);
 });
+
+// Event listener for the "Use Random Placeholder" toggle
+if (useRandomPlaceholderToggle) {
+  useRandomPlaceholderToggle.addEventListener("change", (e) => {
+    const checked = e.target.checked;
+    updateSetting("useRandomPlaceholder", checked);
+    // If toggled ON, the input will be disabled and cleared by applySettings()
+    // If toggled OFF, applySettings() will re-enable the input and set its value.
+  });
+}
 
 // Markdown View Font Size controls
 markdownViewFontSizeSlider.addEventListener("input", (e) => {
@@ -634,50 +796,6 @@ markdownViewTextAlignRadios.forEach((radio) => {
 });
 resetMarkdownViewTextAlignButton.addEventListener("click", () => {
   updateSetting("markdownViewTextAlign", defaultSettings.markdownViewTextAlign);
-});
-
-accentColorPicker.addEventListener("input", (e) => {
-  updateSetting("accentColor", e.target.value);
-  applyAccentColor(e.target.value);
-});
-resetAccentColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].accent;
-  updateSetting("accentColor", defaultColor);
-  applyAccentColor(defaultColor);
-  accentColorPicker.value = defaultColor;
-});
-
-bgColorPicker.addEventListener("input", (e) => {
-  updateSetting("appBgColor", e.target.value);
-  applyAppBgColor(e.target.value);
-});
-resetBgColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].bg;
-  updateSetting("appBgColor", defaultColor);
-  applyAppBgColor(defaultColor);
-  bgColorPicker.value = defaultColor;
-});
-
-appTextColorPicker.addEventListener("input", (e) => {
-  updateSetting("appTextColor", e.target.value);
-  applyAppTextColor(e.target.value);
-});
-resetAppTextColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].text;
-  updateSetting("appTextColor", defaultColor);
-  applyAppTextColor(defaultColor);
-  appTextColorPicker.value = defaultColor;
-});
-
-markdownViewTextColorPicker.addEventListener("input", (e) => {
-  updateSetting("markdownViewTextColor", e.target.value);
-  applyMarkdownViewTextColor(e.target.value);
-});
-resetMarkdownViewTextColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].markdownViewText;
-  updateSetting("markdownViewTextColor", defaultColor);
-  applyMarkdownViewTextColor(defaultColor);
-  markdownViewTextColorPicker.value = defaultColor;
 });
 
 // Global Reset
@@ -736,17 +854,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateCounts();
 
-  loadSettings();
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-  applySettings();
+  loadSettings(); // Loads non-color settings into appSettings
+  applySettings(); // Applies all non-color settings AND calls applyAllColors to init colors and pickers.
   initPresetsDropdown();
   setupButtonOrder();
   updateFullScreenIcon();
+  setupExportImportFeatures();
 });

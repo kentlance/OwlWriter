@@ -6,6 +6,7 @@ import {
 } from "./main.js";
 import { defaultSettings } from "./settings.js";
 import { applyAllColors, defaultColors, getSystemTheme } from "./colors.js";
+import { getUserPresets } from "./exportImportTheme.js";
 
 const presetSelect = document.getElementById("presetSelect");
 const accentColorPicker = document.getElementById("accentColorPicker");
@@ -66,7 +67,7 @@ const mapColorNames = (colors) => ({
   markdownViewTextColor: colors.markdownViewText,
 });
 
-const presets = {
+const builtInPresets = {
   Default: {
     // Reference defaultSettings directly from settings.js
     settings: defaultSettings,
@@ -92,6 +93,7 @@ const presets = {
       controlBarButtonOpacity: 0.8,
       writingAreaPlaceholder: " ",
       showMarkdownPopup: true,
+      useRandomPlaceholder: false,
     },
     colors: {
       accentColor: "#60a5fa",
@@ -118,6 +120,7 @@ const presets = {
       controlBarButtonOpacity: 0.8,
       writingAreaPlaceholder: " ",
       showMarkdownPopup: true,
+      useRandomPlaceholder: false,
     },
     colors: {
       accentColor: "#93c5fd",
@@ -142,9 +145,10 @@ const presets = {
       isWordCountVisible: true,
       hideControlBarOnHover: false,
       controlBarButtonOpacity: 1,
-      // use naming convention "RANDOM_PLACEHOLDER_" + preset name to indicate a random placeholder on that preset
-      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_TEA",
+      // Use special string for random placeholder with naming convention "RANDOM_PLACEHOLDER_<PRESET_NAME>"
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_TEA", // will be replaced by getRandomDynamicPlaceholder()
       showMarkdownPopup: true,
+      useRandomPlaceholder: true,
     },
     colors: {
       accentColor: "#a3b18a",
@@ -171,6 +175,7 @@ const presets = {
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SKY",
       showMarkdownPopup: true,
+      useRandomPlaceholder: true,
     },
     colors: {
       accentColor: "#67e8f9",
@@ -197,6 +202,7 @@ const presets = {
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SAKURA",
       showMarkdownPopup: true,
+      useRandomPlaceholder: true,
     },
     colors: {
       accentColor: "#f9a8d4",
@@ -223,6 +229,7 @@ const presets = {
       controlBarButtonOpacity: 0.9,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SUNSET",
       showMarkdownPopup: true,
+      useRandomPlaceholder: true,
     },
     colors: {
       accentColor: "#fcd34d",
@@ -249,6 +256,7 @@ const presets = {
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_CREAM",
       showMarkdownPopup: true,
+      useRandomPlaceholder: true,
     },
     colors: {
       accentColor: "#d9f99d",
@@ -261,31 +269,69 @@ const presets = {
   },
 };
 
+// Combine built-in and user-defined presets
+function getAllAvailablePresets() {
+  const userPresets = getUserPresets();
+  const combinedPresets = { ...builtInPresets };
+
+  userPresets.forEach((preset) => {
+    if (typeof preset.settings.useRandomPlaceholder === "undefined") {
+      preset.settings.useRandomPlaceholder = false; // Default to false if not specified
+    }
+    // If an imported theme explicitly used the RANDOM_PLACEHOLDER_USER_DEFINED flag,
+    // make sure its useRandomPlaceholder property is set to true.
+    if (
+      preset.settings.writingAreaPlaceholder ===
+        "RANDOM_PLACEHOLDER_USER_DEFINED" &&
+      !preset.settings.useRandomPlaceholder
+    ) {
+      preset.settings.useRandomPlaceholder = true;
+    } else if (
+      preset.settings.writingAreaPlaceholder !==
+        "RANDOM_PLACEHOLDER_USER_DEFINED" &&
+      preset.settings.useRandomPlaceholder
+    ) {
+      // If it claims to be random but has a specific placeholder (not the flag), treat it as not random.
+      // This is a safeguard against malformed custom themes.
+      preset.settings.useRandomPlaceholder = false;
+    }
+
+    combinedPresets[preset.name] = preset;
+  });
+
+  return combinedPresets;
+}
+
 export function applyPreset(presetName) {
-  const preset = presets[presetName];
+  const allPresets = getAllAvailablePresets(); // Use all available presets, including user-defined
+  const preset = allPresets[presetName];
+
   if (!preset) {
     console.warn(`Preset "${presetName}" not found.`);
     return;
   }
 
+  // Determine the actual placeholder text and the random placeholder flag
+  let actualPlaceholderValue = preset.settings.writingAreaPlaceholder;
+  // Ensure useRandomPlaceholder is a boolean, defaulting to false if undefined
+  let useRandomFlag = preset.settings.useRandomPlaceholder || false;
+
+  // If the preset specifies to use a random placeholder
+  if (useRandomFlag) {
+    actualPlaceholderValue = getRandomDynamicPlaceholder();
+  }
+  // If useRandomFlag is false, actualPlaceholderValue remains whatever is in preset.settings.writingAreaPlaceholder
+
   // Update appSettings with the preset's settings
   for (const key of Object.keys(preset.settings)) {
-    let valueToSet = preset.settings[key];
-
-    // Handle random placeholders
-    if (
-      key === "writingAreaPlaceholder" &&
-      (valueToSet === "RANDOM_PLACEHOLDER_TEA" ||
-        valueToSet === "RANDOM_PLACEHOLDER_SKY" ||
-        valueToSet === "RANDOM_PLACEHOLDER_SAKURA" ||
-        valueToSet === "RANDOM_PLACEHOLDER_SUNSET" ||
-        valueToSet === "RANDOM_PLACEHOLDER_CREAM")
-    ) {
-      valueToSet = getRandomDynamicPlaceholder(); // Generate a random one
+    // Handle writingAreaPlaceholder and useRandomPlaceholder specially
+    if (key === "writingAreaPlaceholder") {
+      appSettings[key] = actualPlaceholderValue; // Set the resolved placeholder text
+    } else if (key === "useRandomPlaceholder") {
+      appSettings[key] = useRandomFlag; // Set the boolean flag
+    } else {
+      appSettings[key] = preset.settings[key];
     }
-
-    // Update the appSettings object directly
-    appSettings[key] = valueToSet;
   }
 
   // Apply colors from the preset
@@ -294,26 +340,32 @@ export function applyPreset(presetName) {
   }
 
   saveSettings();
-  applySettings();
+  applySettings(); // This will now correctly set the placeholder and toggle input based on useRandomPlaceholder
 
-  // Update color picker values in the settings panel to reflect the preset colors
-  accentColorPicker.value =
-    localStorage.getItem("accentColor") ||
-    defaultColors[getSystemTheme()].accent;
-  bgColorPicker.value =
-    localStorage.getItem("appBgColor") || defaultColors[getSystemTheme()].bg;
-  appTextColorPicker.value =
-    localStorage.getItem("appTextColor") ||
-    defaultColors[getSystemTheme()].text;
-  writingAreaBgColorPicker.value =
-    localStorage.getItem("writingAreaBgColor") ||
-    defaultColors[getSystemTheme()].writingAreaBg;
-  writingAreaTextColorPicker.value =
-    localStorage.getItem("writingAreaTextColor") ||
-    defaultColors[getSystemTheme()].writingAreaText;
-  markdownViewTextColorPicker.value =
-    localStorage.getItem("markdownViewTextColor") ||
-    defaultColors[getSystemTheme()].markdownViewText;
+  // Update color picker values in the settings panel
+  if (accentColorPicker)
+    accentColorPicker.value =
+      localStorage.getItem("accentColor") ||
+      defaultColors[getSystemTheme()].accent;
+  if (bgColorPicker)
+    bgColorPicker.value =
+      localStorage.getItem("appBgColor") || defaultColors[getSystemTheme()].bg;
+  if (appTextColorPicker)
+    appTextColorPicker.value =
+      localStorage.getItem("appTextColor") ||
+      defaultColors[getSystemTheme()].text;
+  if (writingAreaBgColorPicker)
+    writingAreaBgColorPicker.value =
+      localStorage.getItem("writingAreaBgColor") ||
+      defaultColors[getSystemTheme()].writingAreaBg;
+  if (writingAreaTextColorPicker)
+    writingAreaTextColorPicker.value =
+      localStorage.getItem("writingAreaTextColor") ||
+      defaultColors[getSystemTheme()].writingAreaText;
+  if (markdownViewTextColorPicker)
+    markdownViewTextColorPicker.value =
+      localStorage.getItem("markdownViewTextColor") ||
+      defaultColors[getSystemTheme()].markdownViewText;
 
   if (presetSelect) {
     presetSelect.value = presetName;
@@ -329,12 +381,23 @@ export function initPresetsDropdown() {
   // Clear existing options before adding to prevent duplicates on re-init
   presetSelect.innerHTML = "";
 
-  for (const name in presets) {
+  const allPresets = getAllAvailablePresets();
+
+  // Sort presets: Default and Light first, then others alphabetically
+  const sortedPresetNames = Object.keys(allPresets).sort((a, b) => {
+    if (a === "Default") return -1;
+    if (b === "Default") return 1;
+    if (a === "Light") return -1;
+    if (b === "Light") return 1;
+    return a.localeCompare(b);
+  });
+
+  sortedPresetNames.forEach((name) => {
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;
     presetSelect.appendChild(option);
-  }
+  });
 
   const customOption = document.createElement("option");
   customOption.value = "Custom";
@@ -344,14 +407,16 @@ export function initPresetsDropdown() {
   // Set the initial value of the dropdown based on current settings
   presetSelect.value = getCurrentPresetName();
 
-  presetSelect.addEventListener("change", (e) => {
-    applyPreset(e.target.value);
-  });
+  presetSelect.removeEventListener("change", handlePresetChange);
+  presetSelect.addEventListener("change", handlePresetChange);
+}
+
+function handlePresetChange(e) {
+  applyPreset(e.target.value);
 }
 
 export function getCurrentPresetName() {
   const currentSettingsFromLS = {};
-  // Define all possible setting keys. This ensures we check all settings for a match.
   const allSettingKeys = [
     "documentPanelWidth",
     "writingAreaFontFamily",
@@ -367,15 +432,16 @@ export function getCurrentPresetName() {
     "controlBarButtonOpacity",
     "writingAreaPlaceholder",
     "showMarkdownPopup",
+    "useRandomPlaceholder",
   ];
 
   // Get current settings from localStorage or fallback to Default preset's values
   for (const key of allSettingKeys) {
     const value = localStorage.getItem(key);
-    // Use the default value from the 'Default' preset for type reference and fallback
-    const defaultValue = presets.Default.settings[key];
+    const defaultValue = defaultSettings[key];
 
     if (value !== null) {
+      // Correctly parse boolean and number values from string storage
       if (typeof defaultValue === "boolean") {
         currentSettingsFromLS[key] = value === "true";
       } else if (typeof defaultValue === "number") {
@@ -384,71 +450,86 @@ export function getCurrentPresetName() {
         currentSettingsFromLS[key] = value;
       }
     } else {
-      // If not in localStorage, use the default from the 'Default' preset
+      // If not in localStorage, use default from defaultSettings
       currentSettingsFromLS[key] = defaultValue;
     }
   }
 
   // Get current colors from localStorage or default
   const currentColorsFromLS = {};
-  for (const key of Object.keys(presets.Default.colors)) {
+  // Use the keys from a default theme's mapped colors to ensure all color keys are covered
+  const defaultColorKeys = Object.keys(mapColorNames(defaultColors.light));
+  for (const key of defaultColorKeys) {
     const value = localStorage.getItem(key);
-    currentColorsFromLS[key] =
-      value !== null
-        ? value
-        : defaultColors[getSystemTheme()][key.replace("Color", "")];
+    const defaultThemedColor =
+      defaultColors[getSystemTheme()][key.replace("Color", "")];
+    currentColorsFromLS[key] = value !== null ? value : defaultThemedColor;
   }
 
-  // Compare current settings and colors against each defined preset
-  for (const presetName in presets) {
-    const preset = presets[presetName];
+  const allPresets = getAllAvailablePresets();
+
+  for (const presetName in allPresets) {
+    const preset = allPresets[presetName];
 
     let settingsMatch = true;
     for (const key of allSettingKeys) {
-      // Special handling for writingAreaPlaceholder when it's meant to be random
-      if (
-        key === "writingAreaPlaceholder" &&
-        (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
-          preset.settings[key] === "RANDOM_PLACEHOLDER_SKY" ||
-          preset.settings[key] === "RANDOM_PLACEHOLDER_SAKURA" ||
-          preset.settings[key] === "RANDOM_PLACEHOLDER_SUNSET" ||
-          preset.settings[key] === "RANDOM_PLACEHOLDER_CREAM")
-      ) {
-        const currentPlaceholder = currentSettingsFromLS[key];
+      // Handle useRandomPlaceholder
+      if (key === "useRandomPlaceholder") {
+        // The preset's useRandomPlaceholder might be undefined for older built-ins, default to false
+        const presetUsesRandom = preset.settings[key] || false;
+        const currentUsesRandom = currentSettingsFromLS[key] || false;
 
-        // Check if the current placeholder matches any *fixed* placeholder from *any other preset*
-        const isCurrentPlaceholderFixedInOtherPreset = Object.keys(
-          presets
-        ).some((otherPresetName) => {
-          if (otherPresetName === presetName) return false; // Don't compare against itself
-          const otherPreset = presets[otherPresetName];
-          const otherPresetPlaceholder =
-            otherPreset.settings.writingAreaPlaceholder;
-          // Only compare if the other preset's placeholder is *not* a random chosen placeholder
-          return (
-            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_TEA" &&
-            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SKY" &&
-            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SAKURA" &&
-            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_SUNSET" &&
-            otherPresetPlaceholder !== "RANDOM_PLACEHOLDER_CREAM" &&
-            otherPresetPlaceholder === currentPlaceholder
-          );
-        });
-
-        if (isCurrentPlaceholderFixedInOtherPreset) {
-          // If the current placeholder IS a fixed one from another preset, then this random-placeholder preset does NOT match.
+        if (currentUsesRandom !== presetUsesRandom) {
           settingsMatch = false;
           break;
         }
-        // If it's NOT a fixed placeholder from another preset, it *could* be
-        // a random one set by this preset, so we allow it to proceed as a match for this key.
-        continue; // Skip direct value comparison
       }
+      // Special comparison logic for writingAreaPlaceholder
+      else if (key === "writingAreaPlaceholder") {
+        const currentPlaceholder = currentSettingsFromLS[key];
+        const presetPlaceholder = preset.settings[key]; // This could be a fixed string or "RANDOM_PLACEHOLDER_..."
 
-      // Perform direct comparison for all other settings
-      if (currentSettingsFromLS[key] !== preset.settings[key]) {
-        settingsMatch = false;
-        break;
+        const presetUsesRandom = preset.settings.useRandomPlaceholder || false;
+        const currentUsesRandom =
+          currentSettingsFromLS.useRandomPlaceholder || false;
+
+        if (presetUsesRandom) {
+          if (!currentUsesRandom) {
+            settingsMatch = false;
+            break;
+          }
+        } else {
+          // If the preset has a specific, non-random placeholder
+          if (currentUsesRandom || currentPlaceholder !== presetPlaceholder) {
+            // If current uses random, or if current placeholder text doesn't match preset's fixed text
+            settingsMatch = false;
+            break;
+          }
+        }
+      }
+      // General comparison for other settings
+      else {
+        let presetSettingValue = preset.settings[key];
+        let currentSettingValue = currentSettingsFromLS[key];
+
+        // Ensure types match for comparison, especially for booleans/numbers from localStorage
+        if (
+          typeof presetSettingValue === "boolean" &&
+          typeof currentSettingValue === "string"
+        ) {
+          currentSettingValue = currentSettingValue === "true";
+        } else if (
+          typeof presetSettingValue === "number" &&
+          typeof currentSettingValue === "string"
+        ) {
+          currentSettingValue = parseFloat(currentSettingValue);
+        }
+
+        // Perform direct comparison for all other settings
+        if (currentSettingValue !== presetSettingValue) {
+          settingsMatch = false;
+          break;
+        }
       }
     }
 

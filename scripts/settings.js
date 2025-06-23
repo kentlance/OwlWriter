@@ -19,4 +19,6 @@ Your work is saved locally on your browser, so make sure to save often!
   
 Write anything... `,
   showMarkdownPopup: true,
+  useRandomPlaceholder: false,
+  buttonOrder: [],
 };
