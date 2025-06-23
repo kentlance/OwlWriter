@@ -11,6 +11,7 @@ import {
   resetAllColors,
 } from "./colors.js";
 
+// Import defaultSettings from settings.js
 import { defaultSettings } from "./settings.js";
 
 import { initPresetsDropdown } from "./presets.js";
@@ -28,7 +29,7 @@ const wordCountSpan = document.getElementById("wordCount");
 const charCountSpan = document.getElementById("charCount");
 
 const settingsButton = document.getElementById("settingsButton");
-const settingsPanel = document.getElementById("settingsPanel");
+export const settingsPanel = document.getElementById("settingsPanel");
 const overlay = document.getElementById("overlay");
 const closeSettingsButton = document.getElementById("closeSettingsButton");
 
@@ -167,21 +168,25 @@ const fullScreenToggleButton = document.getElementById(
   "fullScreenToggleButton"
 );
 
-// State Variables - loaded frpm localStorage
-let currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
-let writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
-let currentFontSize = defaultSettings.fontSize;
-let writingAreaTextAlign = defaultSettings.writingAreaTextAlign;
-let currentLetterSpacing = defaultSettings.letterSpacing;
-let currentLineHeight = defaultSettings.lineHeight;
-let currentWordSpacing = defaultSettings.wordSpacing;
-let currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
-let markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
-let isWordCountVisible = defaultSettings.isWordCountVisible;
-let hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
-let currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
-let currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
-let isFullScreen = false;
+// Markdown Popup Toggle
+export const markdownPopupToggle = document.getElementById(
+  "markdownPopupToggle"
+);
+
+let appSettings = {};
+
+// Export appSettings and updateSetting for use in other modules
+export { appSettings };
+
+export function updateSetting(key, value) {
+  appSettings[key] = value;
+  saveSettings(); // Save all settings after any change
+
+  if (key === "showMarkdownPopup") {
+    document.dispatchEvent(new Event("selectionchange"));
+  }
+  applySettings();
+}
 
 // Helper function to map font family keys to CSS font stacks
 const fontFamilyMap = {
@@ -241,72 +246,72 @@ export function showCopyMessage(message = "Content Copied!") {
 
 export function applySettings() {
   // Document Panel Width
-  documentPanel.style.maxWidth = `${currentDocumentPanelWidth}px`;
-  documentPanelWidthValueSpan.textContent = `${currentDocumentPanelWidth}px`;
-  documentPanelWidthSlider.value = currentDocumentPanelWidth;
+  documentPanel.style.maxWidth = `${appSettings.documentPanelWidth}px`;
+  documentPanelWidthValueSpan.textContent = `${appSettings.documentPanelWidth}px`;
+  documentPanelWidthSlider.value = appSettings.documentPanelWidth;
 
   // Writing Area Font Family
   document.documentElement.style.setProperty(
     "--writing-area-font-family",
-    fontFamilyMap[writingAreaFontFamily]
+    fontFamilyMap[appSettings.writingAreaFontFamily]
   );
-  writingAreaFontFamilySelect.value = writingAreaFontFamily;
+  writingAreaFontFamilySelect.value = appSettings.writingAreaFontFamily;
 
   // Writing Area Font Size
-  writingArea.style.fontSize = `${currentFontSize}px`;
-  fontSizeValueSpan.textContent = `${currentFontSize}px`;
-  fontSizeSlider.value = currentFontSize;
+  writingArea.style.fontSize = `${appSettings.fontSize}px`;
+  fontSizeValueSpan.textContent = `${appSettings.fontSize}px`;
+  fontSizeSlider.value = appSettings.fontSize;
 
   // Writing Area Text Align
-  writingArea.style.textAlign = writingAreaTextAlign;
+  writingArea.style.textAlign = appSettings.writingAreaTextAlign;
   writingAreaTextAlignRadios.forEach((radio) => {
-    radio.checked = radio.value === writingAreaTextAlign;
+    radio.checked = radio.value === appSettings.writingAreaTextAlign;
   });
 
   // Writing Area letter-spacing
   document.documentElement.style.setProperty(
     "--writing-area-letter-spacing",
-    `${currentLetterSpacing}em`
+    `${appSettings.letterSpacing}em`
   );
-  letterSpacingSlider.value = currentLetterSpacing;
-  letterSpacingValueSpan.textContent = `${currentLetterSpacing}em`;
+  letterSpacingSlider.value = appSettings.letterSpacing;
+  letterSpacingValueSpan.textContent = `${appSettings.letterSpacing}em`;
 
   // Writing Area line-height
   document.documentElement.style.setProperty(
     "--writing-area-line-height",
-    currentLineHeight
+    appSettings.lineHeight
   );
-  lineHeightSlider.value = currentLineHeight;
-  lineHeightValueSpan.textContent = currentLineHeight;
+  lineHeightSlider.value = appSettings.lineHeight;
+  lineHeightValueSpan.textContent = appSettings.lineHeight;
 
   // Writing Area word-spacing
   document.documentElement.style.setProperty(
     "--writing-area-word-spacing",
-    `${currentWordSpacing}px`
+    `${appSettings.wordSpacing}px`
   );
-  wordSpacingSlider.value = currentWordSpacing;
-  wordSpacingValueSpan.textContent = `${currentWordSpacing}px`;
+  wordSpacingSlider.value = appSettings.wordSpacing;
+  wordSpacingValueSpan.textContent = `${appSettings.wordSpacing}px`;
 
   // Writing Area Placeholder
-  writingArea.placeholder = currentWritingAreaPlaceholder;
+  writingArea.placeholder = appSettings.writingAreaPlaceholder;
   if (writingAreaPlaceholderInput) {
-    writingAreaPlaceholderInput.value = currentWritingAreaPlaceholder;
+    writingAreaPlaceholderInput.value = appSettings.writingAreaPlaceholder;
   }
 
   // Markdown View Font Size
-  markdownOutput.style.fontSize = `${currentMarkdownViewFontSize}px`;
-  markdownViewFontSizeValueSpan.textContent = `${currentMarkdownViewFontSize}px`;
-  markdownViewFontSizeSlider.value = currentMarkdownViewFontSize;
+  markdownOutput.style.fontSize = `${appSettings.markdownViewFontSize}px`;
+  markdownViewFontSizeValueSpan.textContent = `${appSettings.markdownViewFontSize}px`;
+  markdownViewFontSizeSlider.value = appSettings.markdownViewFontSize;
 
   // Markdown View Text Align
-  markdownOutput.style.textAlign = markdownViewTextAlign;
+  markdownOutput.style.textAlign = appSettings.markdownViewTextAlign;
   markdownViewTextAlignRadios.forEach((radio) => {
-    radio.checked = radio.value === markdownViewTextAlign;
+    radio.checked = radio.value === appSettings.markdownViewTextAlign;
   });
 
   // Word Count Visibility
-  statusBar.style.display = isWordCountVisible ? "flex" : "none";
-  wordCountToggleCheckbox.checked = isWordCountVisible;
+  statusBar.style.display = appSettings.isWordCountVisible ? "flex" : "none";
+  wordCountToggleCheckbox.checked = appSettings.isWordCountVisible;
 
   // Apply Control Bar hover behavior
   applyControlBarHoverBehavior();
@@ -314,12 +319,18 @@ export function applySettings() {
   // Control Bar Button Opacity
   document.documentElement.style.setProperty(
     "--control-bar-button-opacity",
-    currentControlBarButtonOpacity
+    appSettings.controlBarButtonOpacity
   );
-  controlBarButtonOpacitySlider.value = currentControlBarButtonOpacity;
+  controlBarButtonOpacitySlider.value = appSettings.controlBarButtonOpacity;
   controlBarButtonOpacityValueSpan.textContent = `${Math.round(
-    currentControlBarButtonOpacity * 100
+    appSettings.controlBarButtonOpacity * 100
   )}%`;
+
+  // Markdown Popup Toggle state
+  if (markdownPopupToggle) {
+    // Check if the element exists
+    markdownPopupToggle.checked = appSettings.showMarkdownPopup;
+  }
 
   applyAllColors(
     accentColorPicker,
@@ -331,88 +342,27 @@ export function applySettings() {
   );
 }
 
+// Function to save all settings to localStorage
 export function saveSettings() {
-  localStorage.setItem("documentPanelWidth", currentDocumentPanelWidth);
-  localStorage.setItem("writingAreaFontFamily", writingAreaFontFamily);
-  localStorage.setItem("fontSize", currentFontSize);
-  localStorage.setItem("writingAreaTextAlign", writingAreaTextAlign);
-  localStorage.setItem("letterSpacing", currentLetterSpacing);
-  localStorage.setItem("lineHeight", currentLineHeight);
-  localStorage.setItem("wordSpacing", currentWordSpacing);
-  localStorage.setItem("markdownViewFontSize", currentMarkdownViewFontSize);
-  localStorage.setItem("markdownViewTextAlign", markdownViewTextAlign);
-  localStorage.setItem("isWordCountVisible", isWordCountVisible);
-  localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
-  localStorage.setItem(
-    "controlBarButtonOpacity",
-    currentControlBarButtonOpacity
-  );
-  localStorage.setItem("writingAreaPlaceholder", currentWritingAreaPlaceholder);
+  localStorage.setItem("appSettings", JSON.stringify(appSettings));
 }
 
+// Function to load all settings from localStorage
 export function loadSettings() {
-  currentDocumentPanelWidth =
-    parseInt(localStorage.getItem("documentPanelWidth")) ||
-    defaultSettings.documentPanelWidth;
+  const savedSettings = JSON.parse(localStorage.getItem("appSettings")) || {};
+  Object.assign(appSettings, defaultSettings, savedSettings);
 
-  writingAreaFontFamily =
-    localStorage.getItem("writingAreaFontFamily") ||
-    defaultSettings.writingAreaFontFamily;
-
-  currentFontSize =
-    parseInt(localStorage.getItem("fontSize")) || defaultSettings.fontSize;
-
-  writingAreaTextAlign =
-    localStorage.getItem("writingAreaTextAlign") ||
-    defaultSettings.writingAreaTextAlign;
-
-  currentLetterSpacing =
-    parseFloat(localStorage.getItem("letterSpacing")) ||
-    defaultSettings.letterSpacing;
-
-  currentLineHeight =
-    parseFloat(localStorage.getItem("lineHeight")) ||
-    defaultSettings.lineHeight;
-
-  currentWordSpacing =
-    parseFloat(localStorage.getItem("wordSpacing")) ||
-    defaultSettings.wordSpacing;
-
-  currentMarkdownViewFontSize =
-    parseInt(localStorage.getItem("markdownViewFontSize")) ||
-    defaultSettings.markdownViewFontSize;
-
-  markdownViewTextAlign =
-    localStorage.getItem("markdownViewTextAlign") ||
-    defaultSettings.markdownViewTextAlign;
-
-  const storedIsWordCountVisible = localStorage.getItem("isWordCountVisible");
-  if (storedIsWordCountVisible === "true") {
-    isWordCountVisible = true;
-  } else if (storedIsWordCountVisible === "false") {
-    isWordCountVisible = false;
-  } else {
-    isWordCountVisible = defaultSettings.isWordCountVisible;
+  // For boolean values stored as strings, convert them if necessary
+  if (typeof appSettings.isWordCountVisible === "string") {
+    appSettings.isWordCountVisible = appSettings.isWordCountVisible === "true";
   }
-
-  const storedHideControlBarOnHover = localStorage.getItem(
-    "hideControlBarOnHover"
-  );
-  if (storedHideControlBarOnHover === "true") {
-    hideControlBarOnHover = true;
-  } else if (storedHideControlBarOnHover === "false") {
-    hideControlBarOnHover = false;
-  } else {
-    hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
+  if (typeof appSettings.hideControlBarOnHover === "string") {
+    appSettings.hideControlBarOnHover =
+      appSettings.hideControlBarOnHover === "true";
   }
-
-  currentControlBarButtonOpacity =
-    parseFloat(localStorage.getItem("controlBarButtonOpacity")) ||
-    defaultSettings.controlBarButtonOpacity;
-
-  currentWritingAreaPlaceholder =
-    localStorage.getItem("writingAreaPlaceholder") ||
-    defaultSettings.writingAreaPlaceholder;
+  if (typeof appSettings.showMarkdownPopup === "string") {
+    appSettings.showMarkdownPopup = appSettings.showMarkdownPopup === "true";
+  }
 }
 
 // Internal Functions
@@ -430,27 +380,22 @@ function togglePanel(panel) {
 }
 
 function resetAllToDefault() {
-  currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
-  writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
-  currentFontSize = defaultSettings.fontSize;
-  writingAreaTextAlign = defaultSettings.writingAreaTextAlign;
-  currentLetterSpacing = defaultSettings.letterSpacing;
-  currentLineHeight = defaultSettings.lineHeight;
-  currentWordSpacing = defaultSettings.wordSpacing;
-  currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
-  markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
-  isWordCountVisible = defaultSettings.isWordCountVisible;
-  hideControlBarOnHover = defaultSettings.hideControlBarOnHover;
-  currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
-  currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
+  // Reset appSettings to default values
+  Object.assign(appSettings, defaultSettings);
+
+  // Reset colors specifically
   resetAllColors();
+
+  // Other specific resets
   resetButtonOrderToDefault();
-  applySettings();
-  saveSettings();
+
+  applySettings(); // Apply all changes to the UI
+  saveSettings(); // Save the default settings to localStorage
 }
 
 function showControlBar() {
-  if (hideControlBarOnHover) {
+  if (appSettings.hideControlBarOnHover) {
+    // Use appSettings
     controlBar.classList.add("control-bar-show");
     controlBar.classList.remove("control-bar-hidden");
   }
@@ -458,7 +403,7 @@ function showControlBar() {
 
 function hideControlBar() {
   if (
-    hideControlBarOnHover &&
+    appSettings.hideControlBarOnHover &&
     !controlBar.matches(":hover") &&
     !controlBarHoverTrigger.matches(":hover")
   ) {
@@ -473,7 +418,7 @@ function applyControlBarHoverBehavior() {
   controlBar.removeEventListener("mouseleave", hideControlBar);
   controlBar.removeEventListener("mouseenter", showControlBar);
 
-  if (hideControlBarOnHover) {
+  if (appSettings.hideControlBarOnHover) {
     controlBar.classList.add("control-bar-hidden");
     controlBar.classList.remove("control-bar-show");
 
@@ -485,7 +430,7 @@ function applyControlBarHoverBehavior() {
     controlBar.classList.add("control-bar-show");
     controlBar.classList.remove("control-bar-hidden");
   }
-  hideControlBarToggle.checked = hideControlBarOnHover;
+  hideControlBarToggle.checked = appSettings.hideControlBarOnHover; // Use appSettings
 }
 
 // Fullscreen functions
@@ -582,174 +527,157 @@ closeMarkdownShortcutsButton.addEventListener("click", () => {
 
 // Document Panel Width controls
 documentPanelWidthSlider.addEventListener("input", (e) => {
-  currentDocumentPanelWidth = parseInt(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("documentPanelWidth", parseInt(e.target.value));
 });
 resetDocumentPanelWidthButton.addEventListener("click", () => {
-  currentDocumentPanelWidth = defaultSettings.documentPanelWidth;
-  applySettings();
-  saveSettings();
+  updateSetting("documentPanelWidth", defaultSettings.documentPanelWidth);
 });
 
 // Writing Area Font Family controls
 writingAreaFontFamilySelect.addEventListener("change", (e) => {
-  writingAreaFontFamily = e.target.value;
-  applySettings();
-  saveSettings();
+  updateSetting("writingAreaFontFamily", e.target.value);
 });
 resetWritingAreaFontFamilyButton.addEventListener("click", () => {
-  writingAreaFontFamily = defaultSettings.writingAreaFontFamily;
-  applySettings();
-  saveSettings();
+  updateSetting("writingAreaFontFamily", defaultSettings.writingAreaFontFamily);
 });
 
 // Font Size controls
 fontSizeSlider.addEventListener("input", (e) => {
-  currentFontSize = parseInt(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("fontSize", parseInt(e.target.value));
 });
 resetFontSizeButton.addEventListener("click", () => {
-  currentFontSize = defaultSettings.fontSize;
-  applySettings();
-  saveSettings();
+  updateSetting("fontSize", defaultSettings.fontSize);
 });
 
 // Writing Area Text Align controls
 writingAreaTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
-    writingAreaTextAlign = e.target.value;
-    applySettings();
-    saveSettings();
+    updateSetting("writingAreaTextAlign", e.target.value);
   });
 });
 resetWritingAreaTextAlignButton.addEventListener("click", () => {
-  writingAreaTextAlign = defaultSettings.writingAreaTextAlign;
-  applySettings();
-  saveSettings();
+  updateSetting("writingAreaTextAlign", defaultSettings.writingAreaTextAlign);
 });
 
 // Letter Spacing controls
 letterSpacingSlider.addEventListener("input", (e) => {
-  currentLetterSpacing = parseFloat(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("letterSpacing", parseFloat(e.target.value));
 });
 resetLetterSpacingButton.addEventListener("click", () => {
-  currentLetterSpacing = defaultSettings.letterSpacing;
-  applySettings();
-  saveSettings();
+  updateSetting("letterSpacing", defaultSettings.letterSpacing);
 });
 
 // Line Height controls
 lineHeightSlider.addEventListener("input", (e) => {
-  currentLineHeight = parseFloat(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("lineHeight", parseFloat(e.target.value));
 });
 resetLineHeightButton.addEventListener("click", () => {
-  currentLineHeight = defaultSettings.lineHeight;
-  applySettings();
-  saveSettings();
+  updateSetting("lineHeight", defaultSettings.lineHeight);
 });
 
 // Word Spacing controls
 wordSpacingSlider.addEventListener("input", (e) => {
-  currentWordSpacing = parseFloat(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("wordSpacing", parseFloat(e.target.value));
 });
 resetWordSpacingButton.addEventListener("click", () => {
-  currentWordSpacing = defaultSettings.wordSpacing;
-  applySettings();
-  saveSettings();
+  updateSetting("wordSpacing", defaultSettings.wordSpacing);
 });
 
 // Writing Area Background Color controls
 writingAreaBgColorPicker.addEventListener("input", (e) => {
+  updateSetting("writingAreaBgColor", e.target.value);
   applyWritingAreaBgColor(e.target.value);
 });
 resetWritingAreaBgColorButton.addEventListener("click", () => {
   const defaultColor = defaultColors[getSystemTheme()].writingAreaBg;
+  updateSetting("writingAreaBgColor", defaultColor);
   applyWritingAreaBgColor(defaultColor);
   writingAreaBgColorPicker.value = defaultColor;
 });
 
 // Writing Area Text Color controls
 writingAreaTextColorPicker.addEventListener("input", (e) => {
+  updateSetting("writingAreaTextColor", e.target.value);
   applyWritingAreaTextColor(e.target.value);
 });
 resetWritingAreaTextColorButton.addEventListener("click", () => {
   const defaultColor = defaultColors[getSystemTheme()].writingAreaText;
+  updateSetting("writingAreaTextColor", defaultColor);
   applyWritingAreaTextColor(defaultColor);
   writingAreaTextColorPicker.value = defaultColor;
 });
 
 // Writing Area Placeholder
 writingAreaPlaceholderInput.addEventListener("input", (e) => {
-  currentWritingAreaPlaceholder = e.target.value;
-  applySettings();
-  saveSettings();
+  updateSetting("writingAreaPlaceholder", e.target.value);
 });
 
 resetWritingAreaPlaceholderButton.addEventListener("click", () => {
-  currentWritingAreaPlaceholder = defaultSettings.writingAreaPlaceholder;
-  applySettings();
-  saveSettings();
+  updateSetting(
+    "writingAreaPlaceholder",
+    defaultSettings.writingAreaPlaceholder
+  );
 });
 
 // Markdown View Font Size controls
 markdownViewFontSizeSlider.addEventListener("input", (e) => {
-  currentMarkdownViewFontSize = parseInt(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("markdownViewFontSize", parseInt(e.target.value));
 });
 resetMarkdownViewFontSizeButton.addEventListener("click", () => {
-  currentMarkdownViewFontSize = defaultSettings.markdownViewFontSize;
-  applySettings();
-  saveSettings();
+  updateSetting("markdownViewFontSize", defaultSettings.markdownViewFontSize);
 });
 
 markdownViewTextAlignRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
-    markdownViewTextAlign = e.target.value;
-    applySettings();
-    saveSettings();
+    updateSetting("markdownViewTextAlign", e.target.value);
   });
 });
 resetMarkdownViewTextAlignButton.addEventListener("click", () => {
-  markdownViewTextAlign = defaultSettings.markdownViewTextAlign;
-  applySettings();
-  saveSettings();
+  updateSetting("markdownViewTextAlign", defaultSettings.markdownViewTextAlign);
 });
 
 accentColorPicker.addEventListener("input", (e) => {
+  updateSetting("accentColor", e.target.value);
   applyAccentColor(e.target.value);
 });
 resetAccentColorButton.addEventListener("click", () => {
-  applyAccentColor(defaultColors[getSystemTheme()].accent);
+  const defaultColor = defaultColors[getSystemTheme()].accent;
+  updateSetting("accentColor", defaultColor);
+  applyAccentColor(defaultColor);
+  accentColorPicker.value = defaultColor;
 });
 
 bgColorPicker.addEventListener("input", (e) => {
+  updateSetting("appBgColor", e.target.value);
   applyAppBgColor(e.target.value);
 });
 resetBgColorButton.addEventListener("click", () => {
-  applyAppBgColor(defaultColors[getSystemTheme()].bg);
+  const defaultColor = defaultColors[getSystemTheme()].bg;
+  updateSetting("appBgColor", defaultColor);
+  applyAppBgColor(defaultColor);
+  bgColorPicker.value = defaultColor;
 });
 
 appTextColorPicker.addEventListener("input", (e) => {
+  updateSetting("appTextColor", e.target.value);
   applyAppTextColor(e.target.value);
 });
 resetAppTextColorButton.addEventListener("click", () => {
-  applyAppTextColor(defaultColors[getSystemTheme()].text);
+  const defaultColor = defaultColors[getSystemTheme()].text;
+  updateSetting("appTextColor", defaultColor);
+  applyAppTextColor(defaultColor);
+  appTextColorPicker.value = defaultColor;
 });
 
 markdownViewTextColorPicker.addEventListener("input", (e) => {
+  updateSetting("markdownViewTextColor", e.target.value);
   applyMarkdownViewTextColor(e.target.value);
 });
 resetMarkdownViewTextColorButton.addEventListener("click", () => {
-  applyMarkdownViewTextColor(defaultColors[getSystemTheme()].markdownViewText);
+  const defaultColor = defaultColors[getSystemTheme()].markdownViewText;
+  updateSetting("markdownViewTextColor", defaultColor);
+  applyMarkdownViewTextColor(defaultColor);
+  markdownViewTextColorPicker.value = defaultColor;
 });
 
 // Global Reset
@@ -757,30 +685,32 @@ resetAllColorsButton.addEventListener("click", resetAllToDefault);
 
 // Word Count Toggle
 wordCountToggleCheckbox.addEventListener("change", (e) => {
-  isWordCountVisible = e.target.checked;
-  applySettings();
-  saveSettings();
+  updateSetting("isWordCountVisible", e.target.checked);
 });
 
 // Control Bar Toggle
 hideControlBarToggle.addEventListener("change", () => {
-  hideControlBarOnHover = hideControlBarToggle.checked;
-  localStorage.setItem("hideControlBarOnHover", hideControlBarOnHover);
-  applyControlBarHoverBehavior();
+  updateSetting("hideControlBarOnHover", hideControlBarToggle.checked);
 });
 
 // Control Bar Button Opacity controls
 controlBarButtonOpacitySlider.addEventListener("input", (e) => {
-  currentControlBarButtonOpacity = parseFloat(e.target.value);
-  applySettings();
-  saveSettings();
+  updateSetting("controlBarButtonOpacity", parseFloat(e.target.value));
 });
 
 resetControlBarButtonOpacityButton.addEventListener("click", () => {
-  currentControlBarButtonOpacity = defaultSettings.controlBarButtonOpacity;
-  applySettings();
-  saveSettings();
+  updateSetting(
+    "controlBarButtonOpacity",
+    defaultSettings.controlBarButtonOpacity
+  );
 });
+
+// Markdown Popup Toggle Event Listener
+if (markdownPopupToggle) {
+  markdownPopupToggle.addEventListener("change", (event) => {
+    updateSetting("showMarkdownPopup", event.target.checked);
+  });
+}
 
 // Fullscreen Event Listener
 fullScreenToggleButton.addEventListener("click", () => {

@@ -1,4 +1,9 @@
-import { applySettings, loadSettings, saveSettings } from "./main.js";
+import {
+  applySettings,
+  loadSettings,
+  saveSettings,
+  appSettings,
+} from "./main.js";
 import { defaultSettings } from "./settings.js";
 import { applyAllColors, defaultColors, getSystemTheme } from "./colors.js";
 
@@ -86,6 +91,7 @@ const presets = {
       hideControlBarOnHover: true,
       controlBarButtonOpacity: 0.8,
       writingAreaPlaceholder: " ",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#60a5fa",
@@ -111,6 +117,7 @@ const presets = {
       hideControlBarOnHover: true,
       controlBarButtonOpacity: 0.8,
       writingAreaPlaceholder: " ",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#93c5fd",
@@ -124,7 +131,7 @@ const presets = {
   Tea: {
     settings: {
       documentPanelWidth: 800,
-      writingAreaFontFamily: "libre-baskerville", // CHANGED: From "serif" to "libre-baskerville"
+      writingAreaFontFamily: "libre-baskerville",
       fontSize: 19,
       writingAreaTextAlign: "justify",
       letterSpacing: 0.02,
@@ -137,6 +144,7 @@ const presets = {
       controlBarButtonOpacity: 1,
       // use naming convention "RANDOM_PLACEHOLDER_" + preset name to indicate a random placeholder on that preset
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_TEA",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#a3b18a",
@@ -150,7 +158,7 @@ const presets = {
   Sky: {
     settings: {
       documentPanelWidth: 900,
-      writingAreaFontFamily: "raleway", // CHANGED: From "inter" to "raleway"
+      writingAreaFontFamily: "raleway",
       fontSize: 17,
       writingAreaTextAlign: "left",
       letterSpacing: 0,
@@ -162,6 +170,7 @@ const presets = {
       hideControlBarOnHover: false,
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SKY",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#67e8f9",
@@ -175,7 +184,7 @@ const presets = {
   Sakura: {
     settings: {
       documentPanelWidth: 850,
-      writingAreaFontFamily: "amethysta", // CHANGED: From "serif" to "amethysta"
+      writingAreaFontFamily: "amethysta",
       fontSize: 18,
       writingAreaTextAlign: "left",
       letterSpacing: 0.01,
@@ -187,6 +196,7 @@ const presets = {
       hideControlBarOnHover: false,
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SAKURA",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#f9a8d4",
@@ -212,6 +222,7 @@ const presets = {
       hideControlBarOnHover: true,
       controlBarButtonOpacity: 0.9,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_SUNSET",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#fcd34d",
@@ -225,7 +236,7 @@ const presets = {
   Cream: {
     settings: {
       documentPanelWidth: 800,
-      writingAreaFontFamily: "quicksand", // CHANGED: From "inter" to "quicksand"
+      writingAreaFontFamily: "quicksand",
       fontSize: 19,
       writingAreaTextAlign: "left",
       letterSpacing: 0,
@@ -237,6 +248,7 @@ const presets = {
       hideControlBarOnHover: false,
       controlBarButtonOpacity: 1,
       writingAreaPlaceholder: "RANDOM_PLACEHOLDER_CREAM",
+      showMarkdownPopup: true,
     },
     colors: {
       accentColor: "#d9f99d",
@@ -256,43 +268,24 @@ export function applyPreset(presetName) {
     return;
   }
 
-  // Define all possible setting keys to ensure consistency and fallback to Default
-  const allSettingKeys = [
-    "documentPanelWidth",
-    "writingAreaFontFamily",
-    "fontSize",
-    "writingAreaTextAlign",
-    "letterSpacing",
-    "lineHeight",
-    "wordSpacing",
-    "markdownViewFontSize",
-    "markdownViewTextAlign",
-    "isWordCountVisible",
-    "hideControlBarOnHover",
-    "controlBarButtonOpacity",
-    "writingAreaPlaceholder",
-  ];
+  // Update appSettings with the preset's settings
+  for (const key of Object.keys(preset.settings)) {
+    let valueToSet = preset.settings[key];
 
-  for (const key of allSettingKeys) {
-    let valueToSet;
-    // Check if the current preset's placeholder is one of the ones that need random placeholder
+    // Handle random placeholders
     if (
       key === "writingAreaPlaceholder" &&
-      (preset.settings[key] === "RANDOM_PLACEHOLDER_TEA" ||
-        preset.settings[key] === "RANDOM_PLACEHOLDER_SKY" ||
-        preset.settings[key] === "RANDOM_PLACEHOLDER_SAKURA" ||
-        preset.settings[key] === "RANDOM_PLACEHOLDER_SUNSET" ||
-        preset.settings[key] === "RANDOM_PLACEHOLDER_CREAM")
+      (valueToSet === "RANDOM_PLACEHOLDER_TEA" ||
+        valueToSet === "RANDOM_PLACEHOLDER_SKY" ||
+        valueToSet === "RANDOM_PLACEHOLDER_SAKURA" ||
+        valueToSet === "RANDOM_PLACEHOLDER_SUNSET" ||
+        valueToSet === "RANDOM_PLACEHOLDER_CREAM")
     ) {
       valueToSet = getRandomDynamicPlaceholder(); // Generate a random one
-    } else {
-      // Otherwise, use the preset's value or fallback to Default if not defined
-      valueToSet =
-        preset.settings[key] !== undefined
-          ? preset.settings[key]
-          : presets.Default.settings[key];
     }
-    localStorage.setItem(key, valueToSet);
+
+    // Update the appSettings object directly
+    appSettings[key] = valueToSet;
   }
 
   // Apply colors from the preset
@@ -300,7 +293,7 @@ export function applyPreset(presetName) {
     localStorage.setItem(key, preset.colors[key]);
   }
 
-  loadSettings();
+  saveSettings();
   applySettings();
 
   // Update color picker values in the settings panel to reflect the preset colors
@@ -337,7 +330,6 @@ export function initPresetsDropdown() {
   presetSelect.innerHTML = "";
 
   for (const name in presets) {
-    // Only add the explicit presets defined in the `presets` object
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;
@@ -374,6 +366,7 @@ export function getCurrentPresetName() {
     "hideControlBarOnHover",
     "controlBarButtonOpacity",
     "writingAreaPlaceholder",
+    "showMarkdownPopup",
   ];
 
   // Get current settings from localStorage or fallback to Default preset's values
@@ -411,7 +404,7 @@ export function getCurrentPresetName() {
     const preset = presets[presetName];
 
     let settingsMatch = true;
-    for (const key in preset.settings) {
+    for (const key of allSettingKeys) {
       // Special handling for writingAreaPlaceholder when it's meant to be random
       if (
         key === "writingAreaPlaceholder" &&

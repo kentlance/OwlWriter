@@ -1,3 +1,5 @@
+import { appSettings } from "./main.js";
+
 const writingArea = document.getElementById("writingArea");
 const markdownOutput = document.getElementById("markdownOutput");
 const markdownViewButton = document.getElementById("markdownViewButton");
@@ -85,13 +87,17 @@ writingArea.addEventListener("pointerup", (e) => {
   const currentSelectionLength =
     writingArea.selectionEnd - writingArea.selectionStart;
 
-  if (currentSelectionLength > 0) {
+  // proceed if there's a selection AND the markdown popup is enabled by settings
+  if (currentSelectionLength > 0 && appSettings.showMarkdownPopup) {
     lastPointerCoords.x = e.clientX;
     lastPointerCoords.y = e.clientY;
     lastPointerCoords.type = e.pointerType; // mouse, touch, or pen
 
     // add delay to make sure the pointerup event has been processed
     setTimeout(handleDocumentSelectionChange, 10);
+  } else if (!appSettings.showMarkdownPopup) {
+    // if popup is disabled, ensure it's hidden immediately
+    hideMarkdownPopup();
   }
 });
 
@@ -147,7 +153,8 @@ function calculatePopupPosition() {
 // handle selection detection
 function handleDocumentSelectionChange() {
   // Only show the popup if the writing area is currently displayed
-  if (writingArea.style.display === "none") {
+  // and if user setting `showMarkdownPopup` allows it
+  if (writingArea.style.display === "none" || !appSettings.showMarkdownPopup) {
     hideMarkdownPopup();
     return;
   }

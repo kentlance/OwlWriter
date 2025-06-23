@@ -684,7 +684,24 @@
 
       <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-lg font-semibold mb-3">Writing Area</h3>
-
+        <div class="mb-4">
+          <h3
+            class="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2"
+          >
+            Markdown Popup
+          </h3>
+          <div class="flex items-center justify-between">
+            <label
+              for="markdownPopupToggle"
+              class="text-gray-700 dark:text-gray-300"
+              >Show Popup on Text Selection</label
+            >
+            <label class="toggle-switch">
+              <input type="checkbox" id="markdownPopupToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium">Font Family</label>
@@ -1044,6 +1061,28 @@
             </label>
           </div>
         </div>
+
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium">Text Color</label>
+            <button
+              id="resetMarkdownViewTextColor"
+              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
+            >
+              Reset
+            </button>
+          </div>
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner"
+          >
+            <input
+              type="color"
+              id="markdownViewTextColorPicker"
+              class="w-full h-10 border border-gray-300 dark:border-gray-700 rounded-md cursor-pointer"
+              value="#e0e0e0"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -1111,29 +1150,6 @@
             <input
               type="color"
               id="appTextColorPicker"
-              class="w-full h-10 border border-gray-300 dark:border-gray-700 rounded-md cursor-pointer"
-              value="#e0e0e0"
-            />
-          </div>
-        </div>
-        <div class="mb-4">
-          <div class="flex justify-between items-center mb-2">
-            <label class="block text-sm font-medium"
-              >Markdown View Text Color</label
-            >
-            <button
-              id="resetMarkdownViewTextColor"
-              class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
-            >
-              Reset
-            </button>
-          </div>
-          <div
-            class="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner"
-          >
-            <input
-              type="color"
-              id="markdownViewTextColorPicker"
               class="w-full h-10 border border-gray-300 dark:border-gray-700 rounded-md cursor-pointer"
               value="#e0e0e0"
             />
