@@ -1,4 +1,4 @@
-# OwlWriter
+# 🦉 OwlWriter
 
 **Check it out here:** https://kentlance.github.io/OwlWriter/
 
