@@ -1,4 +1,4 @@
-# OwlWriter
+# 🦉 OwlWriter
 
 **Check it out here:** https://kentlance.github.io/OwlWriter/
 
@@ -21,7 +21,7 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - ~~Fullscreen~~ - implemented!
 - Full offline support (use service workers)
 - Import and export settings
-- Formatting options popup on highlight
+- ~~Formatting options popup on highlight~~ - implemented, need further testing
 
 ## Technologies Used
 
