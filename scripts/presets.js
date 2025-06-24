@@ -21,6 +21,12 @@ const writingAreaTextColorPicker = document.getElementById(
 const markdownViewTextColorPicker = document.getElementById(
   "markdownViewTextColorPicker"
 );
+const controlBarButtonBgColorPicker = document.getElementById(
+  "controlBarButtonBgColorPicker"
+);
+const controlBarButtonIconColorPicker = document.getElementById(
+  "controlBarButtonIconColorPicker"
+);
 
 // Exported for main.js to update values when a preset is applied
 export {
@@ -31,6 +37,8 @@ export {
   writingAreaTextColorPicker,
   markdownViewTextColorPicker,
   presetSelect,
+  controlBarButtonBgColorPicker,
+  controlBarButtonIconColorPicker,
 };
 
 const randomPlaceholders = [
@@ -65,6 +73,8 @@ const mapColorNames = (colors) => ({
   writingAreaBgColor: colors.writingAreaBg,
   writingAreaTextColor: colors.writingAreaText,
   markdownViewTextColor: colors.markdownViewText,
+  controlBarButtonBgColor: colors.controlBarButtonBg,
+  controlBarButtonIconColor: colors.controlBarButtonIcon,
 });
 
 const builtInPresets = {
@@ -98,10 +108,12 @@ const builtInPresets = {
     colors: {
       accentColor: "#60a5fa",
       appBgColor: "#ffffff",
-      appTextColor: "#ffffff",
+      appTextColor: "#395a9d",
       writingAreaBgColor: "#f9fafb",
       writingAreaTextColor: "#1f2937",
       markdownViewTextColor: "#1f2937",
+      controlBarButtonBgColor: "#E2E8F0",
+      controlBarButtonIconColor: "#475569",
     },
   },
   "Minimalist - Dark": {
@@ -123,12 +135,14 @@ const builtInPresets = {
       useRandomPlaceholder: false,
     },
     colors: {
-      accentColor: "#93c5fd",
+      accentColor: "#518dd2",
       appBgColor: "#1a202c",
       appTextColor: "#e2e8f0",
       writingAreaBgColor: "#2d3748",
       writingAreaTextColor: "#f8fafc",
       markdownViewTextColor: "#f8fafc",
+      controlBarButtonBgColor: "#4A4A4A",
+      controlBarButtonIconColor: "#FAFAFA",
     },
   },
   Tea: {
@@ -157,6 +171,8 @@ const builtInPresets = {
       writingAreaBgColor: "#fffbe6",
       writingAreaTextColor: "#6c584c",
       markdownViewTextColor: "#6c584c",
+      controlBarButtonBgColor: "#A3B18A",
+      controlBarButtonIconColor: "#4A2B0A",
     },
   },
   Sky: {
@@ -184,6 +200,8 @@ const builtInPresets = {
       writingAreaBgColor: "#ffffff",
       writingAreaTextColor: "#083344",
       markdownViewTextColor: "#083344",
+      controlBarButtonBgColor: "#B2EBF2",
+      controlBarButtonIconColor: "#01579B",
     },
   },
   Sakura: {
@@ -211,6 +229,8 @@ const builtInPresets = {
       writingAreaBgColor: "#fff0f5",
       writingAreaTextColor: "#31242c",
       markdownViewTextColor: "#31242c",
+      controlBarButtonBgColor: "#FFC0CB",
+      controlBarButtonIconColor: "#4A142F",
     },
   },
   Sunset: {
@@ -238,6 +258,8 @@ const builtInPresets = {
       writingAreaBgColor: "#fef3c7",
       writingAreaTextColor: "#7f1d1d",
       markdownViewTextColor: "#7f1d1d",
+      controlBarButtonBgColor: "#FDBA74",
+      controlBarButtonIconColor: "#7C2D12",
     },
   },
   Cream: {
@@ -265,6 +287,8 @@ const builtInPresets = {
       writingAreaBgColor: "#fdfae7",
       writingAreaTextColor: "#374151",
       markdownViewTextColor: "#374151",
+      controlBarButtonBgColor: "#E5E5E5",
+      controlBarButtonIconColor: "#3F3F46",
     },
   },
 };
@@ -366,7 +390,16 @@ export function applyPreset(presetName) {
     markdownViewTextColorPicker.value =
       localStorage.getItem("markdownViewTextColor") ||
       defaultColors[getSystemTheme()].markdownViewText;
-
+  if (controlBarButtonBgColorPicker)
+    controlBarButtonBgColorPicker.value =
+      localStorage.getItem("controlBarButtonBgColor") ||
+      defaultColors[getSystemTheme()].controlBarButtonBg ||
+      defaultColors[getSystemTheme()].accent;
+  if (controlBarButtonIconColorPicker)
+    controlBarButtonIconColorPicker.value =
+      localStorage.getItem("controlBarButtonIconColor") ||
+      defaultColors[getSystemTheme()].controlBarButtonIcon ||
+      defaultColors[getSystemTheme()].text;
   if (presetSelect) {
     presetSelect.value = presetName;
   }

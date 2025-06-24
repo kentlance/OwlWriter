@@ -5,10 +5,27 @@ import {
   resetAllColors,
 } from "./colors.js";
 
+import {
+  loadPages,
+  createNewPage,
+  deletePage,
+  renamePage,
+  openPage,
+  updateCurrentPageContent,
+  getCurrentPageContent,
+  getCurrentPageId,
+  getAllPages,
+  resetPages,
+} from "./pages.js";
+
 // Import defaultSettings from settings.js
 import { defaultSettings } from "./settings.js";
 
-import { initPresetsDropdown, presetSelect } from "./presets.js";
+import {
+  initPresetsDropdown,
+  presetSelect,
+  getCurrentPresetName,
+} from "./presets.js";
 
 import {
   setupButtonOrder,
@@ -38,6 +55,14 @@ const closeMarkdownShortcutsButton = document.getElementById(
   "closeMarkdownShortcutsButton"
 );
 
+// Pages Panel Elements
+const pagesButton = document.getElementById("pagesButton");
+const pagesPanel = document.getElementById("pagesPanel");
+const closePagesButton = document.getElementById("closePagesButton");
+const pageSearchInput = document.getElementById("pageSearchInput");
+const createNewPageButton = document.getElementById("createNewPageButton");
+const pagesList = document.getElementById("pagesList");
+
 // Control Bar, and Copy Message
 const copyMessage = document.getElementById("copyMessage"); // Used by showCopyMessage
 const controlBar = document.getElementById("controlBar");
@@ -55,6 +80,20 @@ const controlBarButtonOpacityValueSpan = document.getElementById(
 );
 const resetControlBarButtonOpacityButton = document.getElementById(
   "resetControlBarButtonOpacity"
+);
+
+// Control Bar Color elements
+const controlBarButtonBgColorPicker = document.getElementById(
+  "controlBarButtonBgColorPicker"
+);
+const resetControlBarButtonBgColorButton = document.getElementById(
+  "resetControlBarButtonBgColorButton"
+);
+const controlBarButtonIconColorPicker = document.getElementById(
+  "controlBarButtonIconColorPicker"
+);
+const resetControlBarButtonIconColorButton = document.getElementById(
+  "resetControlBarButtonIconColorButton"
 );
 
 // Document Panel Width elements
@@ -186,11 +225,7 @@ export function updateSetting(key, value) {
   if (key === "showMarkdownPopup") {
     document.dispatchEvent(new Event("selectionchange"));
   }
-  // Only call applySettings for non-color changes.
-  // Color changes will trigger applyAllColors directly from their event listeners.
-  if (!key.includes("Color")) {
-    applySettings();
-  }
+  applySettings();
 }
 
 // Helper function to map font family keys to CSS font stacks
@@ -355,7 +390,9 @@ export function applySettings() {
     appTextColorPicker,
     writingAreaBgColorPicker,
     writingAreaTextColorPicker,
-    markdownViewTextColorPicker
+    markdownViewTextColorPicker,
+    controlBarButtonBgColorPicker,
+    controlBarButtonIconColorPicker
   );
 }
 
@@ -386,15 +423,17 @@ export function loadSettings() {
 // Internal Functions
 
 function togglePanel(panel) {
-  panel.classList.toggle("open");
+  // Toggle overlay visibility
   overlay.classList.toggle("hidden");
 
+  // Close all panels first, then open the target panel
   // Ensure only one panel is open at a time
-  if (panel.id === "settingsPanel") {
-    markdownShortcutsPanel.classList.remove("open");
-  } else if (panel.id === "markdownShortcutsPanel") {
-    settingsPanel.classList.remove("open");
-  }
+  settingsPanel.classList.remove("open");
+  markdownShortcutsPanel.classList.remove("open");
+  pagesPanel.classList.remove("open");
+
+  // Open the clicked panel
+  panel.classList.toggle("open");
 }
 
 function resetAllToDefault() {
@@ -515,7 +554,7 @@ function updateFullScreenIcon() {
 // Event Listeners
 writingArea.addEventListener("input", () => {
   updateCounts();
-  localStorage.setItem("savedContent", writingArea.value);
+  updateCurrentPageContent(writingArea.value);
 });
 
 // Panel Toggles
@@ -526,12 +565,125 @@ settingsButton.addEventListener("click", () => {
   }
 });
 
+// Pages Panel Toggles
+if (pagesButton) {
+  pagesButton.addEventListener("click", () => {
+    togglePanel(pagesPanel);
+    if (pagesPanel.classList.contains("open")) {
+      renderPagesList(); // Refresh the list when the panel opens
+    }
+  });
+}
+
+closePagesButton.addEventListener("click", () => {
+  pagesPanel.classList.remove("open");
+  overlay.classList.add("hidden");
+});
+
+createNewPageButton.addEventListener("click", () => {
+  const pageName = prompt("Enter new page name:");
+  if (pageName) {
+    createNewPage(pageName);
+    renderPagesList(); // Refresh the list
+    loadCurrentPageContent(); // Load content of the newly created page
+    updateCounts(); // Update counts for the new page
+  }
+});
+
+pageSearchInput.addEventListener("input", (e) => {
+  renderPagesList(e.target.value); // Filter list based on search
+});
+
+// Page Management UI Rendering Functions
+function renderPagesList(searchTerm = "") {
+  const pages = getAllPages();
+  const currentPageId = getCurrentPageId();
+  pagesList.innerHTML = ""; // Clear existing list
+
+  const filteredPages = pages.filter((page) =>
+    page.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (filteredPages.length === 0 && searchTerm) {
+    pagesList.innerHTML =
+      '<li class="text-gray-500 dark:text-gray-400">No matching pages found.</li>';
+    return;
+  } else if (filteredPages.length === 0 && !searchTerm) {
+    pagesList.innerHTML =
+      '<li class="text-gray-500 dark:text-gray-400">No pages yet. Create one!</li>';
+    return;
+  }
+
+  filteredPages.forEach((page) => {
+    const listItem = document.createElement("li");
+    listItem.className = `flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors duration-200 ${
+      page.id === currentPageId
+        ? "bg-blue-500 text-white dark:bg-blue-700"
+        : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200"
+    }`;
+    listItem.dataset.pageId = page.id; // Store page ID for easy access
+
+    listItem.innerHTML = `
+            <span class="flex-grow truncate mr-2">${page.name}</span>
+            <div class="flex space-x-2">
+                <button class="rename-page-btn text-blue-400 hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-100" title="Rename">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              </svg>
+              
+                </button>
+                <button class="delete-page-btn text-red-400 hover:text-red-600 dark:text-red-300 dark:hover:text-red-100" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+                </button>
+            </div>
+        `;
+    pagesList.appendChild(listItem);
+  });
+}
+
+// page list actions (open, rename, delete)
+pagesList.addEventListener("click", (e) => {
+  const listItem = e.target.closest("li[data-page-id]");
+  if (!listItem) return;
+
+  const pageId = listItem.dataset.pageId;
+
+  if (e.target.closest(".rename-page-btn")) {
+    const currentName = listItem.querySelector("span").textContent;
+    const newName = prompt("Rename page:", currentName);
+    if (newName && newName.trim() !== "" && newName !== currentName) {
+      renamePage(pageId, newName.trim());
+      renderPagesList(); // Re-render to show updated name
+    }
+  } else if (e.target.closest(".delete-page-btn")) {
+    if (confirm("Are you sure you want to delete this page?")) {
+      const newCurrentPageId = deletePage(pageId);
+      renderPagesList(); // Re-render to show updated list
+      loadCurrentPageContent(); // Load content of the new current page
+      updateCounts();
+    }
+  } else {
+    // Clicked on the list item itself (to open the page)
+    openPage(pageId);
+    loadCurrentPageContent(); // Load content of the newly opened page
+    updateCounts();
+    renderPagesList(); // Re-render to highlight the active page
+  }
+});
+
+function loadCurrentPageContent() {
+  writingArea.value = getCurrentPageContent();
+}
+
 helpButton.addEventListener("click", () => togglePanel(markdownShortcutsPanel));
 
 // Overlay click closes all panels
 overlay.addEventListener("click", () => {
   settingsPanel.classList.remove("open");
   markdownShortcutsPanel.classList.remove("open");
+  pagesPanel.classList.remove("open");
   overlay.classList.add("hidden");
 });
 
@@ -603,156 +755,93 @@ resetWordSpacingButton.addEventListener("click", () => {
   updateSetting("wordSpacing", defaultSettings.wordSpacing);
 });
 
-// Color Even Listeners
+// Color Event Listeners
+function setupColorPicker(
+  pickerElement,
+  localStorageKey,
+  defaultColorProperty,
+  resetButtonElement = null
+) {
+  if (pickerElement) {
+    pickerElement.addEventListener("input", (e) => {
+      localStorage.setItem(localStorageKey, e.target.value);
+      applySettings();
+      if (presetSelect) {
+        presetSelect.value = getCurrentPresetName();
+      }
+    });
+  }
+
+  if (resetButtonElement) {
+    resetButtonElement.addEventListener("click", () => {
+      const defaultColor =
+        defaultColors[getSystemTheme()][defaultColorProperty];
+      localStorage.setItem(localStorageKey, defaultColor);
+      applySettings();
+      if (presetSelect) {
+        presetSelect.value = getCurrentPresetName();
+      }
+    });
+  }
+}
 // Writing Area Background Color controls
-writingAreaBgColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("writingAreaBgColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetWritingAreaBgColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].writingAreaBg;
-  localStorage.setItem("writingAreaBgColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(
+  writingAreaBgColorPicker,
+  "writingAreaBgColor",
+  "writingAreaBg",
+  resetWritingAreaBgColorButton
+);
 
 // Writing Area Text Color controls
-writingAreaTextColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("writingAreaTextColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetWritingAreaTextColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].writingAreaText;
-  localStorage.setItem("writingAreaTextColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(
+  writingAreaTextColorPicker,
+  "writingAreaTextColor",
+  "writingAreaText",
+  resetWritingAreaTextColorButton
+);
 
 // Accent Color controls
-accentColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("accentColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetAccentColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].accent;
-  localStorage.setItem("accentColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(
+  accentColorPicker,
+  "accentColor",
+  "accent",
+  resetAccentColorButton
+);
 
 // Background Color controls
-bgColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("appBgColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetBgColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].bg;
-  localStorage.setItem("appBgColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(bgColorPicker, "appBgColor", "bg", resetBgColorButton);
 
 // App Text Color controls
-appTextColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("appTextColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetAppTextColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].text;
-  localStorage.setItem("appTextColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(
+  appTextColorPicker,
+  "appTextColor",
+  "text",
+  resetAppTextColorButton
+);
 
 // Markdown View Text Color controls
-markdownViewTextColorPicker.addEventListener("input", (e) => {
-  localStorage.setItem("markdownViewTextColor", e.target.value);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
-resetMarkdownViewTextColorButton.addEventListener("click", () => {
-  const defaultColor = defaultColors[getSystemTheme()].markdownViewText;
-  localStorage.setItem("markdownViewTextColor", defaultColor);
-  applyAllColors(
-    accentColorPicker,
-    bgColorPicker,
-    appTextColorPicker,
-    writingAreaBgColorPicker,
-    writingAreaTextColorPicker,
-    markdownViewTextColorPicker
-  );
-});
+setupColorPicker(
+  markdownViewTextColorPicker,
+  "markdownViewTextColor",
+  "markdownViewText",
+  resetMarkdownViewTextColorButton
+);
+
+// Control Bar Button Background Color controls
+setupColorPicker(
+  controlBarButtonBgColorPicker,
+  "controlBarButtonBgColor",
+  "controlBarButtonBg",
+  resetControlBarButtonBgColorButton
+);
+
+// Control Bar Button Icon Color controls
+setupColorPicker(
+  controlBarButtonIconColorPicker,
+  "controlBarButtonIconColor",
+  "controlBarButtonIcon",
+  resetControlBarButtonIconColorButton
+);
 
 // Writing Area Placeholder
 writingAreaPlaceholderInput.addEventListener("input", (e) => {
@@ -848,16 +937,17 @@ document.addEventListener("msfullscreenchange", updateFullScreenIcon);
 // Initial Setup on Load
 document.addEventListener("DOMContentLoaded", () => {
   // Load saved content
-  const savedContent = localStorage.getItem("savedContent");
-  if (savedContent) {
-    writingArea.value = savedContent;
-  }
+  const { pages, currentPageId: initialCurrentPageId } = loadPages();
+  loadCurrentPageContent();
   updateCounts();
 
   loadSettings(); // Loads non-color settings into appSettings
-  applySettings(); // Applies all non-color settings AND calls applyAllColors to init colors and pickers.
+  applySettings(); // Applies all non-color settings AND calls applyAllColors
+
   initPresetsDropdown();
   setupButtonOrder();
   updateFullScreenIcon();
   setupExportImportFeatures();
+
+  renderPagesList();
 });

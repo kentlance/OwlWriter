@@ -27,6 +27,13 @@
   --dropdown-text-color: #1f2937;
 
   --control-bar-button-opacity: 1;
+
+  --control-bar-button-bg-color: var(
+    --accent-color
+  ); /* Default to accent for initial look */
+  --control-bar-button-icon-color: var(
+    --app-text-color
+  ); /* Default to app text color */
 }
 
 .dark {
@@ -78,10 +85,13 @@ body {
 .control-bar button {
   opacity: var(--control-bar-button-opacity);
   transition: opacity 0.3s ease;
+  background-color: var(--control-bar-button-bg-color);
+  color: var(--app-text-color) !important;
 }
 
 #settingsPanel,
-#markdownShortcutsPanel {
+#markdownShortcutsPanel,
+#pagesPanel {
   position: fixed;
   top: 0;
   right: -420px;
@@ -92,15 +102,18 @@ body {
   transition: right 0.3s ease-in-out;
   z-index: 99999;
   color: var(--app-text-color);
+  background-color: var(--app-bg-color);
 }
 
 #settingsPanel.open,
-#markdownShortcutsPanel.open {
+#markdownShortcutsPanel.open,
+#pagesPanel.open {
   right: 0;
 }
 
 #closeSettingsButton,
-#closeMarkdownShortcutsButton {
+#closeMarkdownShortcutsButton,
+#closePagesButton {
   z-index: 101;
 }
 
@@ -229,8 +242,11 @@ input[type="range"].range-accent-color::-moz-range-thumb {
 
 #controlBar button,
 #controlBar button svg {
-  color: var(--app-text-color) !important;
-  stroke: var(--app-text-color) !important;
+  color: var(--control-bar-button-icon-color) !important;
+  stroke: var(--control-bar-button-icon-color) !important;
+}
+.control-bar button:hover {
+  filter: brightness(1.1);
 }
 
 #exportDropdown a {
@@ -268,5 +284,15 @@ input[type="range"].range-accent-color::-moz-range-thumb {
   #settingsPanel.open,
   #markdownShortcutsPanel.open {
     right: 0;
+  }
+
+  #pagesPanel {
+    width: 100%;
+    left: -100%;
+    padding: 1rem;
+  }
+
+  #pagesPanel.open {
+    left: 0;
   }
 }

@@ -76,9 +76,6 @@ function showMarkdownPopup(x, y) {
 
 function hideMarkdownPopup() {
   markdownHighlightPopup.classList.add("hidden");
-  console.log(
-    "[hideMarkdownPopup] Hiding popup and resetting lastPointerCoords."
-  );
   lastPointerCoords = { x: 0, y: 0, type: "" }; // Reset coordinates when popup hides
 }
 
@@ -164,25 +161,11 @@ function handleDocumentSelectionChange() {
     writingArea.selectionEnd
   );
 
-  console.log(
-    `[handleDocumentSelectionChange] Selected text length: ${selectedText.length}`
-  );
-  console.log(
-    `[handleDocumentSelectionChange] Active element:`,
-    document.activeElement
-  );
-
   // Check if text is selected within the writingArea and it is the active element
   if (selectedText.length > 0 && document.activeElement === writingArea) {
-    console.log(
-      "[handleDocumentSelectionChange] Text selected in writing area."
-    );
     const { x, y } = calculatePopupPosition(); // Get calculated position
     showMarkdownPopup(x, y);
   } else {
-    console.log(
-      "[handleDocumentSelectionChange] No text selected or writing area not active, hiding popup."
-    );
     hideMarkdownPopup();
   }
 }
@@ -192,7 +175,6 @@ document.addEventListener("selectionchange", handleDocumentSelectionChange);
 
 // hide the popup when text is typed or selection changes
 writingArea.addEventListener("input", () => {
-  console.log("[input listener] Input detected, hiding popup.");
   hideMarkdownPopup();
 });
 writingArea.addEventListener("keydown", (e) => {
@@ -217,7 +199,6 @@ markdownHighlightPopup.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-format]");
   if (button) {
     const format = button.dataset.format;
-    console.log(`[Popup Click] Applying format: ${format}`);
     switch (format) {
       case "bold":
         applyFormatting("**", "**");

@@ -2,18 +2,22 @@ export const defaultColors = {
   light: {
     accent: "#60a5fa",
     bg: "#ffffff",
-    text: "#adc9ff",
+    text: "#395a9d",
     writingAreaBg: "#f9fafb",
     writingAreaText: "#1f2937",
     markdownViewText: "#1f2937",
+    controlBarButtonBg: "#e0e0e0",
+    controlBarButtonIcon: "#395a9d",
   },
   dark: {
-    accent: "#64b5f6",
+    accent: "#3174aa",
     bg: "#1c1f3b",
-    text: "#e0e0e0",
+    text: "#a0bffd",
     writingAreaBg: "#282b49",
     writingAreaText: "#f0f0f0",
     markdownViewText: "#e0e0e0",
+    controlBarButtonBg: "#4a4a4a",
+    controlBarButtonIcon: "#f0f0f0",
   },
 };
 
@@ -57,13 +61,25 @@ export function applyMarkdownViewTextColor(color) {
   localStorage.setItem("markdownViewTextColor", color);
 }
 
+export function applyControlBarButtonBgColor(color) {
+  applyCssVar("--control-bar-button-bg-color", color);
+  localStorage.setItem("controlBarButtonBgColor", color);
+}
+
+export function applyControlBarButtonIconColor(color) {
+  applyCssVar("--control-bar-button-icon-color", color);
+  localStorage.setItem("controlBarButtonIconColor", color);
+}
+
 export function applyAllColors(
   accentPicker,
   appBgPicker,
   appTextPicker,
   writingAreaBgPicker,
   writingAreaTextPicker,
-  markdownViewTextPicker
+  markdownViewTextPicker,
+  controlBarButtonBgPicker,
+  controlBarButtonIconPicker
 ) {
   const currentTheme = getSystemTheme();
   const themeDefaults = defaultColors[currentTheme];
@@ -103,6 +119,22 @@ export function applyAllColors(
   applyCssVar("--markdown-view-text-color", markdownViewTextColor);
   if (markdownViewTextPicker)
     markdownViewTextPicker.value = markdownViewTextColor;
+
+  // Control Bar Buttons
+  let controlBarButtonBgColor =
+    localStorage.getItem("controlBarButtonBgColor") ||
+    themeDefaults.controlBarButtonBg;
+  applyCssVar("--control-bar-button-bg-color", controlBarButtonBgColor);
+  if (controlBarButtonBgPicker)
+    controlBarButtonBgPicker.value = controlBarButtonBgColor;
+
+  // Control Bar Button Icon Color
+  let controlBarButtonIconColor =
+    localStorage.getItem("controlBarButtonIconColor") ||
+    themeDefaults.controlBarButtonIcon;
+  applyCssVar("--control-bar-button-icon-color", controlBarButtonIconColor);
+  if (controlBarButtonIconPicker)
+    controlBarButtonIconPicker.value = controlBarButtonIconColor;
 }
 
 export function resetAllColors() {
@@ -112,4 +144,6 @@ export function resetAllColors() {
   localStorage.removeItem("writingAreaBgColor");
   localStorage.removeItem("writingAreaTextColor");
   localStorage.removeItem("markdownViewTextColor");
+  localStorage.removeItem("controlBarButtonBgColor");
+  localStorage.removeItem("controlBarButtonIconColor");
 }

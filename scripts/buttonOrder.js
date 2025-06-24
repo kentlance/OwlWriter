@@ -6,6 +6,7 @@ const DEFAULT_BUTTON_ORDER = [
   "markdownViewButton",
   "helpButton",
   "fullScreenToggleButton",
+  "pagesButton",
   "settingsButton",
 ];
 
@@ -19,6 +20,7 @@ const BUTTON_NAMES = {
   markdownViewButton: "Toggle Markdown View",
   helpButton: "Markdown Shortcuts",
   fullScreenToggleButton: "Toggle Fullscreen",
+  pagesButton: "Manage Pages",
   settingsButton: "Settings",
 };
 
