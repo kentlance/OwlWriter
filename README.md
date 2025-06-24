@@ -15,7 +15,7 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - **Persistent Settings**: Your work is saved locally in your browser. **Make  sure to save often!**
 
 ## Soon
-- Multiple Pages
+- ~~Multiple Pages~~ - implemented!
     - Folders/Groups
 - Line highlighting (focused mode)
 - ~~Fullscreen~~ - implemented!
