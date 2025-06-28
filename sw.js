@@ -1,5 +1,5 @@
 const APP_PREFIX = "OwlWriter_"; // Use your app name
-const VERSION = "version_02"; // Increment  every time theres an update cached files or sw.js
+const VERSION = "version_03"; // Increment  every time theres an update cached files or sw.js
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const urlsToCache = [
