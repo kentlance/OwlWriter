@@ -63,7 +63,16 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
   height: 100vh;
   display: flex;
-  flex-direction: column; /* Stack control bar, document panel, status bar vertically */
+  flex-direction: column;
+}
+
+#controlBar {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+  gap: 0.2rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 #documentPanel {
@@ -75,6 +84,7 @@ body {
   width: var(--document-panel-width);
   /* Add transition for smoother resizing */
   transition: max-width 0.3s ease, width 0.3s ease, padding 0.3s ease;
+  box-sizing: border-box;
 }
 
 #writingArea,
@@ -90,7 +100,12 @@ body {
   opacity: var(--control-bar-button-opacity);
   transition: opacity 0.3s ease;
   background-color: var(--control-bar-button-bg-color);
-  color: var(--app-text-color) !important;
+  color: var(--control-bar-button-icon-color) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.5rem;
 }
 
 #settingsPanel,
@@ -107,6 +122,8 @@ body {
   z-index: 99999;
   color: var(--app-text-color);
   background-color: var(--app-bg-color);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 #settingsPanel.open,
@@ -239,16 +256,17 @@ input:checked + .slider:before {
 
 /* Styling for the range slider track */
 input[type="range"] {
+  appearance: none;
   -webkit-appearance: none;
   width: 100%;
-  height: 8px; /* Adjust height as needed */
+  height: 0.5rem; /* Adjust height as needed */
   background: transparent;
 }
 
 /* WebKit (Chrome, Safari, Edge) track */
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 8px;
+  height: 0.5rem;
   cursor: pointer;
   background: var(--slider-track-bg-color);
   border-radius: 4px;
@@ -257,7 +275,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 /* Mozilla (Firefox) track */
 input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 8px;
+  height: 0.5rem;
   cursor: pointer;
   background: var(--slider-track-bg-color);
   border-radius: 4px;
@@ -304,22 +322,33 @@ input[type="range"].range-accent-color::-moz-range-thumb {
 }
 
 @media (max-width: 640px) {
+  body {
+    padding: 0;
+  }
+
+  #documentPanel {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  #writingArea,
+  #markdownOutput {
+    padding: 2vh 1rem;
+  }
+
   #settingsPanel,
-  #markdownShortcutsPanel {
+  #markdownShortcutsPanel,
+  #pagesPanel {
     width: 100%;
     right: -100%;
     padding: 1rem;
+    left: 0;
   }
 
   #settingsPanel.open,
-  #markdownShortcutsPanel.open {
-    right: 0;
-  }
-
+  #markdownShortcutsPanel.open,
   #pagesPanel {
-    width: 100%;
-    left: -100%;
-    padding: 1rem;
+    right: 0;
   }
 
   #pagesPanel.open {
