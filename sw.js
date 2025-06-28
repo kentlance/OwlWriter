@@ -7,6 +7,7 @@ const urlsToCache = [
   "/OwlWriter/index.html",
   "/OwlWriter/style.css",
   "/OwlWriter/fonts.css",
+  "/OwlWriter/manifest.json",
   "/OwlWriter/scripts/buttonOrder.js",
   "/OwlWriter/scripts/colors.js",
   "/OwlWriter/scripts/export.js",
