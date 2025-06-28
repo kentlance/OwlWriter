@@ -29,6 +29,15 @@ function getCurrentColors() {
     markdownViewTextColor: rootStyles
       .getPropertyValue("--markdown-view-text-color")
       .trim(),
+    controlBarButtonBgColor: rootStyles
+      .getPropertyValue("--control-bar-button-bg-color")
+      .trim(),
+    controlBarButtonIconColor: rootStyles
+      .getPropertyValue("--control-bar-button-icon-color")
+      .trim(),
+    sliderTrackBgColor: rootStyles
+      .getPropertyValue("--slider-track-bg-color")
+      .trim(),
   };
 }
 
@@ -48,16 +57,13 @@ function exportTheme() {
     name: themeName,
     settings: { ...appSettings },
     colors: getCurrentColors(),
-    // Add a version or timestamp if want future compatibility checks, need feedback
     version: "1.0",
     timestamp: new Date().toISOString(),
   };
 
-  if (
-    exportData.settings.writingAreaPlaceholder.startsWith("RANDOM_PLACEHOLDER_")
-  ) {
+  if (exportData.settings.useRandomPlaceholder) {
     exportData.settings.writingAreaPlaceholder =
-      document.getElementById("writingArea").placeholder;
+      "RANDOM_PLACEHOLDER_USER_DEFINED";
   }
 
   const jsonString = JSON.stringify(exportData, null, 2);
@@ -96,6 +102,23 @@ function importTheme(event) {
       ) {
         alert("Invalid theme file format. Missing name, settings, or colors.");
         return;
+      }
+
+      if (typeof importedTheme.settings.useRandomPlaceholder === "undefined") {
+        importedTheme.settings.useRandomPlaceholder = false;
+      }
+      if (
+        importedTheme.settings.writingAreaPlaceholder ===
+          "RANDOM_PLACEHOLDER_USER_DEFINED" &&
+        !importedTheme.settings.useRandomPlaceholder
+      ) {
+        importedTheme.settings.useRandomPlaceholder = true;
+      } else if (
+        importedTheme.settings.writingAreaPlaceholder !==
+          "RANDOM_PLACEHOLDER_USER_DEFINED" &&
+        importedTheme.settings.useRandomPlaceholder
+      ) {
+        importedTheme.settings.useRandomPlaceholder = false;
       }
 
       // Load existing user presets
@@ -173,9 +196,9 @@ function renderUserThemesList() {
     const li = document.createElement("li");
     li.className = "flex items-center justify-between py-1"; // basic styling
     li.innerHTML = `
-            <span>${preset.name}</span>
-            <button data-theme-name="${preset.name}" class="text-red-500 hover:text-red-700 ml-4">Delete</button>
-        `;
+      <span>${preset.name}</span>
+      <button data-theme-name="${preset.name}" class="text-red-500 hover:text-red-700 ml-4">Delete</button>
+    `;
     userThemesList.appendChild(li);
   });
 

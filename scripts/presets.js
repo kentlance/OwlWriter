@@ -75,6 +75,7 @@ const mapColorNames = (colors) => ({
   markdownViewTextColor: colors.markdownViewText,
   controlBarButtonBgColor: colors.controlBarButtonBg,
   controlBarButtonIconColor: colors.controlBarButtonIcon,
+  sliderTrackBgColor: colors.sliderTrackBg,
 });
 
 const builtInPresets = {
@@ -114,6 +115,7 @@ const builtInPresets = {
       markdownViewTextColor: "#1f2937",
       controlBarButtonBgColor: "#E2E8F0",
       controlBarButtonIconColor: "#475569",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   "Minimalist - Dark": {
@@ -143,6 +145,7 @@ const builtInPresets = {
       markdownViewTextColor: "#f8fafc",
       controlBarButtonBgColor: "#4A4A4A",
       controlBarButtonIconColor: "#FAFAFA",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   Tea: {
@@ -173,6 +176,7 @@ const builtInPresets = {
       markdownViewTextColor: "#6c584c",
       controlBarButtonBgColor: "#A3B18A",
       controlBarButtonIconColor: "#4A2B0A",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   Sky: {
@@ -202,6 +206,7 @@ const builtInPresets = {
       markdownViewTextColor: "#083344",
       controlBarButtonBgColor: "#B2EBF2",
       controlBarButtonIconColor: "#01579B",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   Sakura: {
@@ -231,6 +236,7 @@ const builtInPresets = {
       markdownViewTextColor: "#31242c",
       controlBarButtonBgColor: "#FFC0CB",
       controlBarButtonIconColor: "#4A142F",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   Sunset: {
@@ -260,6 +266,7 @@ const builtInPresets = {
       markdownViewTextColor: "#7f1d1d",
       controlBarButtonBgColor: "#FDBA74",
       controlBarButtonIconColor: "#7C2D12",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   Cream: {
@@ -289,6 +296,7 @@ const builtInPresets = {
       markdownViewTextColor: "#374151",
       controlBarButtonBgColor: "#E5E5E5",
       controlBarButtonIconColor: "#3F3F46",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
   NeoBrutaliSt: {
@@ -312,12 +320,13 @@ const builtInPresets = {
     colors: {
       accentColor: "#7A7AFF",
       appBgColor: "#494D6E",
-      appTextColorDark: "#EBEBEB",
+      appTextColor: "#EBEBEB",
       writingAreaBgColor: "#3D3D3D",
       writingAreaTextColor: "#EBEBEB",
       markdownViewTextColor: "#EBEBEB",
       controlBarButtonBgColor: "#3D3D3D",
       controlBarButtonIconColor: "#EBEBEB",
+      sliderTrackBgColor: "#e0e0e0",
     },
   },
 };
@@ -478,8 +487,12 @@ function handlePresetChange(e) {
 }
 
 export function getCurrentPresetName() {
+  const allPresets = getAllAvailablePresets();
+  const currentTheme = getSystemTheme();
+
+  // 1. Get current SETTINGS from localStorage with type conversion
   const currentSettingsFromLS = {};
-  const allSettingKeys = [
+  const settingKeysToCompare = [
     "documentPanelWidth",
     "writingAreaFontFamily",
     "fontSize",
@@ -497,109 +510,140 @@ export function getCurrentPresetName() {
     "useRandomPlaceholder",
   ];
 
-  // Get current settings from localStorage or fallback to Default preset's values
-  for (const key of allSettingKeys) {
-    const value = localStorage.getItem(key);
-    const defaultValue = defaultSettings[key];
-
-    if (value !== null) {
-      // Correctly parse boolean and number values from string storage
-      if (typeof defaultValue === "boolean") {
-        currentSettingsFromLS[key] = value === "true";
-      } else if (typeof defaultValue === "number") {
-        currentSettingsFromLS[key] = parseFloat(value);
-      } else {
-        currentSettingsFromLS[key] = value;
-      }
+  settingKeysToCompare.forEach((key) => {
+    const lsValue = localStorage.getItem(key);
+    // Convert localStorage string values back to their expected types for comparison
+    if (lsValue === null) {
+      currentSettingsFromLS[key] = defaultSettings[key]; // Fallback to defaultSettings
+    } else if (
+      key === "isWordCountVisible" ||
+      key === "hideControlBarOnHover" ||
+      key === "showMarkdownPopup" ||
+      key === "useRandomPlaceholder"
+    ) {
+      currentSettingsFromLS[key] = lsValue === "true";
+    } else if (
+      key === "documentPanelWidth" ||
+      key === "fontSize" ||
+      key === "markdownViewFontSize"
+    ) {
+      currentSettingsFromLS[key] = parseInt(lsValue);
+    } else if (
+      key === "letterSpacing" ||
+      key === "lineHeight" ||
+      key === "wordSpacing" ||
+      key === "controlBarButtonOpacity"
+    ) {
+      currentSettingsFromLS[key] = parseFloat(lsValue);
     } else {
-      // If not in localStorage, use default from defaultSettings
-      currentSettingsFromLS[key] = defaultValue;
+      currentSettingsFromLS[key] = lsValue;
     }
-  }
+  });
 
-  // Get current colors from localStorage or default
+  // Get current colors from localStorage
   const currentColorsFromLS = {};
-  // Use the keys from a default theme's mapped colors to ensure all color keys are covered
-  const defaultColorKeys = Object.keys(mapColorNames(defaultColors.light));
-  for (const key of defaultColorKeys) {
-    const value = localStorage.getItem(key);
-    const defaultThemedColor =
-      defaultColors[getSystemTheme()][key.replace("Color", "")];
-    currentColorsFromLS[key] = value !== null ? value : defaultThemedColor;
-  }
+  const allColorKeys = [
+    "accentColor",
+    "appBgColor",
+    "appTextColor",
+    "writingAreaBgColor",
+    "writingAreaTextColor",
+    "markdownViewTextColor",
+    "controlBarButtonBgColor",
+    "controlBarButtonIconColor",
+    "sliderTrackBgColor",
+  ];
 
-  const allPresets = getAllAvailablePresets();
+  allColorKeys.forEach((key) => {
+    const lsValue = localStorage.getItem(key);
+    if (lsValue === null) {
+      const defaultColorMap = {
+        accentColor: "accent",
+        appBgColor: "bg",
+        appTextColor: "text",
+        writingAreaBgColor: "writingAreaBg",
+        writingAreaTextColor: "writingAreaText",
+        markdownViewTextColor: "markdownViewText",
+        controlBarButtonBgColor: "controlBarButtonBg",
+        controlBarButtonIconColor: "controlBarButtonIcon",
+        sliderTrackBgColor: "sliderTrackBg",
+      };
+      // Fallback to defaultColors for current system theme if localStorage item is missing
+      currentColorsFromLS[key] =
+        defaultColors[currentTheme][defaultColorMap[key]];
+    } else {
+      currentColorsFromLS[key] = lsValue;
+    }
+  });
 
   for (const presetName in allPresets) {
     const preset = allPresets[presetName];
 
     let settingsMatch = true;
-    for (const key of allSettingKeys) {
-      // Handle useRandomPlaceholder
+    for (const key of settingKeysToCompare) {
+      let presetSettingValue = preset.settings[key];
+      let currentSettingValue = currentSettingsFromLS[key];
+
+      // Special handling for useRandomPlaceholder and writingAreaPlaceholder
       if (key === "useRandomPlaceholder") {
-        // The preset's useRandomPlaceholder might be undefined for older built-ins, default to false
-        const presetUsesRandom = preset.settings[key] || false;
-        const currentUsesRandom = currentSettingsFromLS[key] || false;
-
-        if (currentUsesRandom !== presetUsesRandom) {
+        if (presetSettingValue !== currentSettingValue) {
           settingsMatch = false;
           break;
         }
-      }
-      // Special comparison logic for writingAreaPlaceholder
-      else if (key === "writingAreaPlaceholder") {
-        const currentPlaceholder = currentSettingsFromLS[key];
-        const presetPlaceholder = preset.settings[key]; // This could be a fixed string or "RANDOM_PLACEHOLDER_..."
+      } else if (key === "writingAreaPlaceholder") {
+        const presetUsesRandom = preset.settings.useRandomPlaceholder;
+        const currentUsesRandom = currentSettingsFromLS.useRandomPlaceholder;
 
-        const presetUsesRandom = preset.settings.useRandomPlaceholder || false;
-        const currentUsesRandom =
-          currentSettingsFromLS.useRandomPlaceholder || false;
-
-        if (presetUsesRandom) {
-          if (!currentUsesRandom) {
-            settingsMatch = false;
-            break;
-          }
+        if (presetUsesRandom && currentUsesRandom) {
+          // both are random, match
+          continue;
+        } else if (presetUsesRandom !== currentUsesRandom) {
+          // only one is random, not match
+          settingsMatch = false;
+          break;
         } else {
-          // If the preset has a specific, non-random placeholder
-          if (currentUsesRandom || currentPlaceholder !== presetPlaceholder) {
-            // If current uses random, or if current placeholder text doesn't match preset's fixed text
+          // both not random, comppare placeholder explicitly
+          if (currentSettingValue !== presetSettingValue) {
             settingsMatch = false;
             break;
           }
         }
-      }
-      // General comparison for other settings
-      else {
-        let presetSettingValue = preset.settings[key];
-        let currentSettingValue = currentSettingsFromLS[key];
-
-        // Ensure types match for comparison, especially for booleans/numbers from localStorage
-        if (
-          typeof presetSettingValue === "boolean" &&
-          typeof currentSettingValue === "string"
-        ) {
-          currentSettingValue = currentSettingValue === "true";
-        } else if (
-          typeof presetSettingValue === "number" &&
-          typeof currentSettingValue === "string"
-        ) {
-          currentSettingValue = parseFloat(currentSettingValue);
-        }
-
-        // Perform direct comparison for all other settings
-        if (currentSettingValue !== presetSettingValue) {
+      } else if (
+        typeof presetSettingValue === "number" &&
+        !Number.isInteger(presetSettingValue)
+      ) {
+        if (Math.abs(currentSettingValue - presetSettingValue) > 0.0001) {
           settingsMatch = false;
           break;
         }
+      } else if (currentSettingValue !== presetSettingValue) {
+        settingsMatch = false;
+        break;
       }
     }
 
     let colorsMatch = true;
     if (settingsMatch) {
-      // Only check colors if settings match so far
-      for (const key in preset.colors) {
-        if (currentColorsFromLS[key] !== preset.colors[key]) {
+      for (const key of allColorKeys) {
+        let presetColorValue;
+        if (preset.colors.hasOwnProperty(key)) {
+          presetColorValue = preset.colors[key];
+        } else {
+          const defaultColorMap = {
+            accentColor: "accent",
+            appBgColor: "bg",
+            appTextColor: "text",
+            writingAreaBgColor: "writingAreaBg",
+            writingAreaTextColor: "writingAreaText",
+            markdownViewTextColor: "markdownViewText",
+            controlBarButtonBgColor: "controlBarButtonBg",
+            controlBarButtonIconColor: "controlBarButtonIcon",
+            sliderTrackBgColor: "sliderTrackBg",
+          };
+          presetColorValue = defaultColors[currentTheme][defaultColorMap[key]];
+        }
+
+        if (currentColorsFromLS[key] !== presetColorValue) {
           colorsMatch = false;
           break;
         }

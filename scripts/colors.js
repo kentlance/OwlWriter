@@ -8,6 +8,7 @@ export const defaultColors = {
     markdownViewText: "#1f2937",
     controlBarButtonBg: "#e0e0e0",
     controlBarButtonIcon: "#395a9d",
+    sliderTrackBg: "#e0e0e0",
   },
   dark: {
     accent: "#3174aa",
@@ -18,6 +19,7 @@ export const defaultColors = {
     markdownViewText: "#e0e0e0",
     controlBarButtonBg: "#4a4a4a",
     controlBarButtonIcon: "#f0f0f0",
+    sliderTrackBg: "#b17b7b",
   },
 };
 
@@ -84,6 +86,11 @@ export function applyAllColors(
   const currentTheme = getSystemTheme();
   const themeDefaults = defaultColors[currentTheme];
 
+  // Slider Track Background Color
+  let sliderTrackBgColor =
+    localStorage.getItem("sliderTrackBgColor") || themeDefaults.sliderTrackBg;
+  applyCssVar("--slider-track-bg-color", sliderTrackBgColor);
+
   // Accent Color
   let accentColor = localStorage.getItem("accentColor") || themeDefaults.accent;
   applyCssVar("--accent-color", accentColor);
@@ -146,4 +153,5 @@ export function resetAllColors() {
   localStorage.removeItem("markdownViewTextColor");
   localStorage.removeItem("controlBarButtonBgColor");
   localStorage.removeItem("controlBarButtonIconColor");
+  localStorage.removeItem("sliderTrackBgColor");
 }
