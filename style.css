@@ -112,8 +112,9 @@ body {
 #pagesPanel {
   position: fixed;
   top: 0;
-  right: -420px;
-  width: 400px;
+  right: -100%;
+  width: 90%;
+  max-width: 400px;
   height: 100%;
   padding: 1rem;
   box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
