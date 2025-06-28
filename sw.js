@@ -1,47 +1,49 @@
-const CACHE_NAME = "owlwriter-cache-v1.10";
+const APP_PREFIX = "OwlWriter_"; // Use your app name
+const VERSION = "version_01"; // Increment  every time theres an update cached files or sw.js
+const CACHE_NAME = APP_PREFIX + VERSION;
 
 const urlsToCache = [
-  "/",
-  "index.html",
-  "style.css",
-  "fonts.css",
-  "scripts/buttonOrder.js",
-  "scripts/colors.js",
-  "scripts/export.js",
-  "scripts/exportImportTheme.js",
-  "scripts/import.js",
-  "scripts/main.js",
-  "scripts/markdown.js",
-  "scripts/pages.js",
-  "scripts/presets.js",
-  "scripts/settings.js",
-  "images/icon512_maskable.png",
-  "images/icon512_rounded.png",
+  "/OwlWriter/", // The root of the app on GitHub Pages (maps to index.html)
+  "/OwlWriter/index.html",
+  "/OwlWriter/style.css",
+  "/OwlWriter/fonts.css",
+  "/OwlWriter/scripts/buttonOrder.js",
+  "/OwlWriter/scripts/colors.js",
+  "/OwlWriter/scripts/export.js",
+  "/OwlWriter/scripts/exportImportTheme.js",
+  "/OwlWriter/scripts/import.js",
+  "/OwlWriter/scripts/main.js",
+  "/OwlWriter/scripts/markdown.js",
+  "/OwlWriter/scripts/pages.js",
+  "/OwlWriter/scripts/presets.js",
+  "/OwlWriter/scripts/settings.js",
+  "/OwlWriter/images/icon512_maskable.png",
+  "/OwlWriter/images/icon512_rounded.png",
 
   // libraries
-  "libraries/tailwind.min.js",
-  "libraries/marked.min.js",
-  "libraries/Sortable.min.js",
+  "/OwlWriter/libraries/tailwind.min.js",
+  "/OwlWriter/libraries/marked.min.js",
+  "/OwlWriter/libraries/Sortable.min.js",
 
   // Local fonts
-  "fonts/inter-v19-latin-regular.woff2",
-  "fonts/inter-v19-latin-regular.ttf",
-  "fonts/amethysta-v16-latin-regular.woff2",
-  "fonts/amethysta-v16-latin-regular.ttf",
-  "fonts/roboto-v48-latin-regular.woff2",
-  "fonts/roboto-v48-latin-regular.ttf",
-  "fonts/merriweather-v32-latin-regular.woff2",
-  "fonts/merriweather-v32-latin-regular.ttf",
-  "fonts/raleway-v36-latin-regular.woff2",
-  "fonts/raleway-v36-latin-regular.ttf",
-  "fonts/nunito-v31-latin-regular.woff2",
-  "fonts/nunito-v31-latin-regular.ttf",
-  "fonts/quicksand-v36-latin-regular.woff2",
-  "fonts/quicksand-v36-latin-regular.ttf",
-  "fonts/outfit-v14-latin-regular.woff2",
-  "fonts/outfit-v14-latin-regular.ttf",
-  "fonts/libre-baskerville-v16-latin-regular.woff2",
-  "fonts/libre-baskerville-v16-latin-regular.ttf",
+  "/OwlWriter/fonts/inter-v19-latin-regular.woff2",
+  "/OwlWriter/fonts/inter-v19-latin-regular.ttf",
+  "/OwlWriter/fonts/amethysta-v16-latin-regular.woff2",
+  "/OwlWriter/fonts/amethysta-v16-latin-regular.ttf",
+  "/OwlWriter/fonts/roboto-v48-latin-regular.woff2",
+  "/OwlWriter/fonts/roboto-v48-latin-regular.ttf",
+  "/OwlWriter/fonts/merriweather-v32-latin-regular.woff2",
+  "/OwlWriter/fonts/merriweather-v32-latin-regular.ttf",
+  "/OwlWriter/fonts/raleway-v36-latin-regular.woff2",
+  "/OwlWriter/fonts/raleway-v36-latin-regular.ttf",
+  "/OwlWriter/fonts/nunito-v31-latin-regular.woff2",
+  "/OwlWriter/fonts/nunito-v31-latin-regular.ttf",
+  "/OwlWriter/fonts/quicksand-v36-latin-regular.woff2",
+  "/OwlWriter/fonts/quicksand-v36-latin-regular.ttf",
+  "/OwlWriter/fonts/outfit-v14-latin-regular.woff2",
+  "/OwlWriter/fonts/outfit-v14-latin-regular.ttf",
+  "/OwlWriter/fonts/libre-baskerville-v16-latin-regular.woff2",
+  "/OwlWriter/fonts/libre-baskerville-v16-latin-regular.ttf",
 ];
 
 self.addEventListener("install", (event) => {
@@ -52,8 +54,6 @@ self.addEventListener("install", (event) => {
       .then((cache) => {
         console.log("Service Worker: Attempting to cache app shell assets...");
 
-        // Use Promise.allSettled to see the result of each individual add
-        // This won't fail the whole install if one asset fails
         const addPromises = urlsToCache.map((url) => {
           return cache
             .add(url)
@@ -76,9 +76,8 @@ self.addEventListener("install", (event) => {
               `Service Worker: Installation completed with ${failed.length} failures.`
             );
             failed.forEach((failure) =>
-              console.error(`  - Failed URL: ${failure.url}`, failure.reason)
+              console.error(`   - Failed URL: ${failure.url}`, failure.reason)
             );
-            // optional if asset fails to download
           } else {
             console.log(
               "Service Worker: All app shell assets successfully cached!"
@@ -95,22 +94,25 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// added comments, uncomment if needed later for debugging
 self.addEventListener("fetch", (event) => {
+  // console.log('fetch request : ' + event.request.url); // Uncomment for detailed debugging
   event.respondWith(
     caches.match(event.request).then((response) => {
       if (response) {
-        // console.log('Service Worker: Serving from cache:', event.request.url);
+        // console.log('responding with cache : ' + event.request.url); // Uncomment for detailed debugging
         return response;
+      } else {
+        // console.log('file is not cached, fetching : ' + event.request.url); // Uncomment for detailed debugging
+        return fetch(event.request).catch((error) => {
+          console.error(
+            "Service Worker: Fetch failed (offline/network issue):",
+            event.request.url,
+            error
+          );
+          // offline page could be called here
+        });
       }
-      // console.log('Service Worker: Fetching from network:', event.request.url);
-      return fetch(event.request).catch((error) => {
-        console.error(
-          "Service Worker: Fetch failed (offline/network issue):",
-          event.request.url,
-          error
-        );
-        // offline page maybe
-      });
     })
   );
 });
@@ -118,18 +120,26 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("activate", (event) => {
   console.log("Service Worker: Activating...");
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keyList) => {
+      const cacheWhitelist = keyList.filter(function (key) {
+        return key.startsWith(APP_PREFIX);
+      });
+
+      // Add current cache name to white list
+      cacheWhitelist.push(CACHE_NAME);
+
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log("Service Worker: Deleting old cache:", cacheName);
-            return caches.delete(cacheName);
+        keyList.map((key) => {
+          if (!cacheWhitelist.includes(key)) {
+            // Use .includes() for cleaner check
+            console.log("Service Worker: Deleting old cache:", key);
+            return caches.delete(key);
           }
         })
       );
     })
   );
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(self.clients.claim()); // Makes the new SW take control immediately
 });
 
 self.addEventListener("message", (event) => {
