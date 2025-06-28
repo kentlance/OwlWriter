@@ -230,29 +230,19 @@ export function updateSetting(key, value) {
 
 // Helper function to map font family keys to CSS font stacks
 const fontFamilyMap = {
-  "system-sans":
-    'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  inter:
-    'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  "system-sans": "ui-sans-serif, system-ui, sans-serif",
+  inter: "Inter, ui-sans-serif, sans-serif",
+  serif: "ui-serif, Georgia, Cambria, serif",
   monospace:
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-  roboto:
-    'Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  merriweather:
-    'Merriweather, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
-  raleway:
-    'Raleway, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  nunito:
-    'Nunito, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  quicksand:
-    'Quicksand, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  outfit:
-    'Outfit, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  "libre-baskerville":
-    '"Libre Baskerville", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
-  amethysta:
-    'Amethysta, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  roboto: "Roboto, ui-sans-serif, sans-serif",
+  merriweather: "Merriweather, ui-serif, serif",
+  raleway: "Raleway, ui-sans-serif, sans-serif",
+  nunito: "Nunito, ui-sans-serif, sans-serif",
+  quicksand: "Quicksand, ui-sans-serif, sans-serif",
+  outfit: "Outfit, ui-sans-serif, sans-serif",
+  "libre-baskerville": '"Libre Baskerville", ui-serif, serif',
+  amethysta: "Amethysta, ui-serif, serif",
 };
 
 export function updateCounts() {
@@ -951,3 +941,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderPagesList();
 });
+
+// service worker for offline support, need testing
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => {
+        console.log(
+          "ServiceWorker registration successful with scope: ",
+          registration.scope
+        );
+      })
+      .catch((err) => {
+        console.log("ServiceWorker registration failed: ", err);
+      });
+  });
+}

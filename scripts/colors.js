@@ -94,7 +94,7 @@ export function applyAllColors(
   applyCssVar("--app-bg-color", appBgColor);
   if (appBgPicker) appBgPicker.value = appBgColor;
 
-  // App Text Color (NEW section)
+  // App Text Color
   let appTextColor = localStorage.getItem("appTextColor") || themeDefaults.text;
   applyCssVar("--app-text-color", appTextColor);
   if (appTextPicker) appTextPicker.value = appTextColor;

@@ -1,0 +1,25 @@
+{
+  "theme_color": "#5788fb",
+  "background_color": "#804ae1",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "images/icon512_maskable.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "images/icon512_rounded.png",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "en-US",
+  "name": "OwlWriter",
+  "short_name": "OwlWriter",
+  "start_url": "index.html"
+}

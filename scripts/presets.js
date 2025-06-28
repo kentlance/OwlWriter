@@ -291,6 +291,35 @@ const builtInPresets = {
       controlBarButtonIconColor: "#3F3F46",
     },
   },
+  NeoBrutaliSt: {
+    settings: {
+      documentPanelWidth: 960,
+      writingAreaFontFamily: "monospace",
+      fontSize: 18,
+      writingAreaTextAlign: "left",
+      letterSpacing: 0,
+      lineHeight: 1.5,
+      wordSpacing: 0,
+      markdownViewFontSize: 16,
+      markdownViewTextAlign: "left",
+      isWordCountVisible: true,
+      hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: ">> INITIATE DOCUMENTATION SEQUENCE...",
+      showMarkdownPopup: true,
+      useRandomPlaceholder: false,
+    },
+    colors: {
+      accentColor: "#7A7AFF",
+      appBgColor: "#494D6E",
+      appTextColorDark: "#EBEBEB",
+      writingAreaBgColor: "#3D3D3D",
+      writingAreaTextColor: "#EBEBEB",
+      markdownViewTextColor: "#EBEBEB",
+      controlBarButtonBgColor: "#3D3D3D",
+      controlBarButtonIconColor: "#EBEBEB",
+    },
+  },
 };
 
 // Combine built-in and user-defined presets
