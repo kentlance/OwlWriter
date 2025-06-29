@@ -4,9 +4,9 @@
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/inter-v19-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/inter-v19-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/inter-v19-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/inter-v19-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* amethysta-regular - latin */
 @font-face {
@@ -14,7 +14,7 @@
   font-family: "Amethysta";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/amethysta-v16-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/amethysta-v16-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
       url("/OwlWriter/fonts/amethysta-v16-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
@@ -25,9 +25,9 @@
   font-family: "Roboto";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/roboto-v48-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/roboto-v48-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/roboto-v48-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/roboto-v48-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
 /* merriweather-regular - latin */
@@ -36,11 +36,9 @@
   font-family: "Merriweather";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/merriweather-v32-latin-regular.woff2")
-      format("woff2"),
+  src: url("/fonts/merriweather-v32-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/merriweather-v32-latin-regular.ttf")
-      format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/merriweather-v32-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* raleway-regular - latin */
 @font-face {
@@ -48,9 +46,9 @@
   font-family: "Raleway";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/raleway-v36-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/raleway-v36-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/raleway-v36-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/raleway-v36-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* nunito-regular - latin */
 @font-face {
@@ -58,9 +56,9 @@
   font-family: "Nunito";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/nunito-v31-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/nunito-v31-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/nunito-v31-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/nunito-v31-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* quicksand-regular - latin */
 @font-face {
@@ -68,9 +66,9 @@
   font-family: "Quicksand";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/quicksand-v36-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/quicksand-v36-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/quicksand-v36-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/quicksand-v36-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* outfit-regular - latin */
 @font-face {
@@ -78,9 +76,9 @@
   font-family: "Outfit";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/outfit-v14-latin-regular.woff2") format("woff2"),
+  src: url("/fonts/outfit-v14-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/outfit-v14-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/outfit-v14-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 /* libre-baskerville-regular - latin */
 @font-face {
@@ -88,9 +86,7 @@
   font-family: "Libre Baskerville";
   font-style: normal;
   font-weight: 400;
-  src: url("/OwlWriter/fonts/libre-baskerville-v16-latin-regular.woff2")
-      format("woff2"),
+  src: url("/fonts/libre-baskerville-v16-latin-regular.woff2") format("woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/OwlWriter/fonts/libre-baskerville-v16-latin-regular.ttf")
-      format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+      url("/fonts/libre-baskerville-v16-latin-regular.ttf") format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
