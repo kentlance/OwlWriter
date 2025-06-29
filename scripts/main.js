@@ -947,7 +947,7 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     // Register the Service Worker with  current scope of repo name in Github Pages
     navigator.serviceWorker
-      .register("/OwlWriter/sw.js", { scope: "/OwlWriter/" })
+      .register("/sw.js", { scope: "/" })
       .then((registration) => {
         console.log(
           "ServiceWorker registration successful with scope: ",
