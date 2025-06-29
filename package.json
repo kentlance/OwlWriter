@@ -1,9 +1,12 @@
 {
   "name": "owlwriter",
   "version": "1.0.0",
-  "description": "**Check it out here:** https://kentlance.github.io/OwlWriter/",
+  "description": "Minimalist writing app with a fully customizable interface.",
   "main": "sw.js",
   "scripts": {
+    "clean": "rimraf dist",
+    "copy-assets": "cpx \"./*.{html,css,json,js}\" dist && cpx \"./fonts/**\" dist/fonts && cpx \"./images/**\" dist/images && cpx \"./libraries/**\" dist/libraries && cpx \"./scripts/**\" dist/scripts",
+    "build": "npm run clean && mkdir -p dist && npx tailwindcss -i ./input.css -o ./dist/output.css --minify && npm run copy-assets",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +14,11 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.11"
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^3.0.0"
+  },
+  "devDependencies": {
+    "cpx": "^1.5.0",
+    "rimraf": "^6.0.1"
   }
 }

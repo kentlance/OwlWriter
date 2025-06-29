@@ -1,10 +1,12 @@
 const APP_PREFIX = "OwlWriter_"; // Use your app name
-const VERSION = "version_04"; // Increment  every time theres an update cached files or sw.js
+const VERSION = "version_05"; // Increment  every time theres an update cached files or sw.js
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const urlsToCache = [
   "/OwlWriter/", // The root of the app on GitHub Pages (maps to index.html)
   "/OwlWriter/index.html",
+  "/OwlWriter/sw.js",
+  "/OwlWriter/dist/output.css",
   "/OwlWriter/style.css",
   "/OwlWriter/fonts.css",
   "/OwlWriter/manifest.json",
@@ -22,7 +24,6 @@ const urlsToCache = [
   "/OwlWriter/images/icon512_rounded.png",
 
   // libraries
-  "/OwlWriter/libraries/tailwind.min.js",
   "/OwlWriter/libraries/marked.min.js",
   "/OwlWriter/libraries/Sortable.min.js",
 
