@@ -1,6 +1,6 @@
 # 🦉 OwlWriter
 
-**Check it out here:** https://kentlance.github.io/OwlWriter/
+**Check it out here:** 
 
 I wanted a writing app that looked specifically how I wanted it to. This has a very customizable interface so you can change it to however you like.
 
