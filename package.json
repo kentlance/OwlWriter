@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "copy-assets": "cpx \"./*.{html,css,json,js}\" dist && cpx \"./fonts/**\" dist/fonts && cpx \"./images/**\" dist/images && cpx \"./libraries/**\" dist/libraries && cpx \"./scripts/**\" dist/scripts",
-    "build": "npm run clean && mkdir -p dist && ls -R . && cat ./index.html && npx tailwindcss -i ./input.css -o ./dist/output.css --minify && npm run copy-assets",
+    "build": "npm run clean && mkdir -p dist && npx tailwindcss --minify -o ./dist/output.css && npm run copy-assets",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,7 +15,7 @@
   "type": "commonjs",
   "dependencies": {
     "@tailwindcss/cli": "^4.1.11",
-    "tailwindcss": "^3.0.0"
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "cpx": "^1.5.0",

@@ -614,7 +614,7 @@ function renderPagesList(searchTerm = "") {
     listItem.dataset.pageId = page.id; // Store page ID for easy access
 
     listItem.innerHTML = `
-            <span class="flex-grow truncate mr-2">${page.name}</span>
+            <span class="grow truncate mr-2">${page.name}</span>
             <div class="flex space-x-2">
                 <button class="rename-page-btn text-blue-400 hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-100" title="Rename">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

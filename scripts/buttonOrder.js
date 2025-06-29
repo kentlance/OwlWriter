@@ -83,7 +83,7 @@ function initializeSortableUI() {
   currentOrder.forEach((buttonId) => {
     const listItem = document.createElement("div");
     listItem.className =
-      "button-order-item flex items-center justify-between p-2 rounded-md bg-gray-200 dark:bg-gray-700 shadow-sm cursor-grab";
+      "button-order-item flex items-center justify-between p-2 rounded-md bg-gray-200 dark:bg-gray-700 shadow-xs cursor-grab";
     listItem.setAttribute("data-id", buttonId);
 
     const iconSpan = document.createElement("span");
