@@ -14,6 +14,24 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
 - **Export Options**: Export content as plain text (`.txt`), HTML (`.html`), or Markdown (`.md`).
 - **Persistent Settings**: Your work is saved locally in your browser. **Make  sure to save often!**
 
+## Screenshots
+
+<p align="center">
+  <img src="https://github.com/kentlance/OwlWriter/blob/master/images/default_theme.png" alt="Default Theme" width="80%"><br>
+  <em>Default Theme</em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/kentlance/OwlWriter/blob/master/images/sakura_theme.png" alt="Sakura Theme" width="80%"><br>
+  <em>Sakura Theme</em>
+</p>
+
+<p align="center">
+  <img src="https://github.com/kentlance/OwlWriter/blob/master/images/sakura_written.png" alt="Sakura Theme (with text)" width="80%"><br>
+  <em>Sakura Theme (with text)</em>
+</p>
+
+
 ## Soon
 - ~~Multiple Pages~~ - implemented!
     - Folders/Groups
