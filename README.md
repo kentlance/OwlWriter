@@ -32,6 +32,28 @@ Inspired by <a href="https://blank.page/">blank.page</a> and <a href="https://ww
   <em>Sakura Theme (with text)</em>
 </p>
 
+## Local Build
+1. Clone the repository
+   ```bash
+   git clone https://github.com/kentlance/OwlWriter.git
+   ```
+3. Navigate into the project directory
+   ```bash
+   cd OwlWriter
+   ```
+5. Install the dependencies
+   ```bash
+   npm install
+   ```
+7. Build the project
+   ```bash
+   npm run build
+   ```
+9. Serve the production-ready build. The build will be placed in the dist folder. You can serve it locally using:
+    ```bash
+   npx serve dist
+    ```
+
 ## Made With
 
 - **HTML5**  
