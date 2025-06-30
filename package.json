@@ -5,7 +5,7 @@
   "main": "sw.js",
   "scripts": {
     "clean": "rimraf dist",
-    "copy-assets": "cpx \"./*.{html,css,json,js}\" dist && cpx \"./fonts/**\" dist/fonts && cpx \"./images/**\" dist/images && cpx \"./libraries/**\" dist/libraries && cpx \"./scripts/**\" dist/scripts",
+    "copy-assets": "node copy-assets.js",
     "build": "npm run clean && mkdir -p dist && npx tailwindcss --minify -o ./dist/output.css && npm run copy-assets",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,7 +18,7 @@
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
-    "cpx": "^1.5.0",
+    "fs-extra": "^11.3.0",
     "rimraf": "^6.0.1"
   }
 }
