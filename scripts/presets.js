@@ -90,7 +90,7 @@ const builtInPresets = {
     settings: defaultSettings,
     colors: mapColorNames(defaultColors.light),
   },
-  "Minimalist (Dark)": {
+  "Minimalist (Light)": {
     settings: {
       documentPanelWidth: 700,
       writingAreaFontFamily: "system-sans",
