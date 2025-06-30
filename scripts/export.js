@@ -4,11 +4,101 @@ const exportTxtButton = document.getElementById("exportTxt");
 const exportHtmlButton = document.getElementById("exportHtml");
 const exportMdButton = document.getElementById("exportMd");
 
+const exportButtonContainer = document.getElementById("exportButtonContainer");
+
 const copyAllButton = document.getElementById("copyAllButton");
 const copyMessage = document.getElementById("copyMessage");
 
 const writingArea = document.getElementById("writingArea"); // For MD and TXT
 const markdownOutput = document.getElementById("markdownOutput"); // For HTML export only
+
+// position export dropdown dynamically (reposition especially for smaller devices)
+function positionExportDropdown() {
+  exportDropdown.style.left = "";
+  exportDropdown.style.right = "";
+
+  const wasHidden = exportDropdown.style.display === "none";
+  if (wasHidden) {
+    exportDropdown.style.visibility = "hidden";
+    exportDropdown.style.display = "block";
+  }
+
+  const dropdownWidth = exportDropdown.offsetWidth;
+  const buttonContainerRect = exportButtonContainer.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const padding = 10;
+
+  // Calculate potential dropdown's left and right edges if it were to align with its parent's right edge (default)
+  const dropdownWouldBeLeftEdgeIfRightAlignedToParent =
+    buttonContainerRect.right - dropdownWidth;
+  const dropdownWouldBeRightEdgeIfRightAlignedToParent =
+    buttonContainerRect.right;
+
+  // Calculate potential dropdown's left and right edges if it were to align with its parent's left edge
+  const dropdownWouldBeLeftEdgeIfLeftAlignedToParent = buttonContainerRect.left;
+  const dropdownWouldBeRightEdgeIfLeftAlignedToParent =
+    buttonContainerRect.left + dropdownWidth;
+
+  // right alignment has enough space
+  if (dropdownWouldBeLeftEdgeIfRightAlignedToParent >= padding) {
+    exportDropdown.style.right = "0px"; // Align to right of parent container
+    exportDropdown.style.left = "auto";
+    exportDropdown.classList.remove("origin-top-left");
+    exportDropdown.classList.add("origin-top-right");
+  }
+  // right alignment doesn't have enough space, but left alignment has enough space
+  else if (
+    dropdownWouldBeRightEdgeIfLeftAlignedToParent <=
+    viewportWidth - padding
+  ) {
+    exportDropdown.style.left = "0px"; // Align to left of parent container
+    exportDropdown.style.right = "auto";
+    exportDropdown.classList.remove("origin-top-right");
+    exportDropdown.classList.add("origin-top-left");
+  }
+  // screen width is too narrow, will not fit
+  else {
+    let calculatedLeft = buttonContainerRect.left;
+    if (calculatedLeft + dropdownWidth > viewportWidth - padding) {
+      calculatedLeft = viewportWidth - dropdownWidth - padding;
+    }
+    if (calculatedLeft < padding) {
+      calculatedLeft = padding;
+    }
+    exportDropdown.style.left =
+      calculatedLeft - buttonContainerRect.left + "px";
+    exportDropdown.style.right = "auto";
+
+    if (
+      buttonContainerRect.left + buttonContainerRect.width / 2 <
+      viewportWidth / 2
+    ) {
+      exportDropdown.classList.remove("origin-top-right");
+      exportDropdown.classList.add("origin-top-left");
+    } else {
+      exportDropdown.classList.remove("origin-top-left");
+      exportDropdown.classList.add("origin-top-right");
+    }
+  }
+
+  // Ensure it doesn't go off the *right* side if it was forced left (Scenario 2 or 3)
+  const finalDropdownRect = exportDropdown.getBoundingClientRect();
+  if (finalDropdownRect.right > viewportWidth - padding) {
+    // This extra check catches if the dropdown is so wide it can't fit even clamped
+    exportDropdown.style.left =
+      viewportWidth - dropdownWidth - padding - buttonContainerRect.left + "px";
+    exportDropdown.style.right = "auto";
+  }
+  if (finalDropdownRect.left < padding) {
+    exportDropdown.style.left = padding - buttonContainerRect.left + "px";
+    exportDropdown.style.right = "auto";
+  }
+
+  if (wasHidden) {
+    exportDropdown.style.display = "none";
+    exportDropdown.style.visibility = "visible";
+  }
+}
 
 // generate a timestamped filename
 function generateFilename(extension) {
@@ -192,8 +282,15 @@ function showCopyMessage() {
 // Event Listeners for Export Dropdown
 exportButton.addEventListener("click", (e) => {
   e.stopPropagation(); // Prevent this click from immediately closing the dropdown via the document listener
-  exportDropdown.style.display =
-    exportDropdown.style.display === "block" ? "none" : "block";
+  const isHidden =
+    exportDropdown.style.display === "none" ||
+    exportDropdown.style.display === "";
+  if (isHidden) {
+    exportDropdown.style.display = "block"; // Make it visible
+    positionExportDropdown(); // Position dynamically
+  } else {
+    exportDropdown.style.display = "none"; // Hide it
+  }
 });
 
 // Close dropdown if clicked outside
@@ -201,6 +298,14 @@ document.addEventListener("click", (e) => {
   // Check if the click was outside the export button and the dropdown itself
   if (!exportButton.contains(e.target) && !exportDropdown.contains(e.target)) {
     exportDropdown.style.display = "none";
+  }
+});
+
+// Reposition dropdown when window is resized
+window.addEventListener("resize", () => {
+  if (exportDropdown.style.display === "block") {
+    // Only re-position if it's currently open
+    positionExportDropdown();
   }
 });
 
