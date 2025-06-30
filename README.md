@@ -1,18 +1,19 @@
-# 🦉 OwlWriter
+<h1><img src="https://github.com/kentlance/OwlWriter/blob/master/images/icon512_rounded.png" alt="OwlWriter Logo" width="30"> OwlWriter</h1>
 
-**Check it out here:**  <a href="https://owlwriter.pages.dev"  >owlwriter.pages.dev</a>
+**Check it out here:** [owlwriter.pages.dev](https://owlwriter.pages.dev)
 
-I wanted a writing app that looked specifically how I wanted it to. This has a very customizable interface so you can change it to however you like.
+I wanted a writing app that looked specifically how I wanted it to. OwlWriter has a lot of tweaks including fonts, layouts, colors, with theme import and exports.
 
-Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https://www.gibney.org/writer"  >Writer</a>.
+Inspired by <a href="https://blank.page/">blank.page</a> and <a href="https://www.gibney.org/writer">Writer</a>.
 
 ## Features
 
-- **Markdown**: Markdown support, with preview and shortcuts
-- **Word & Character Counts**
-- **Customizable Interface**
-- **Export Options**: Export content as plain text (`.txt`), HTML (`.html`), or Markdown (`.md`).
-- **Persistent Settings**: Your work is saved locally in your browser. **Make  sure to save often!**
+- **Markdown:** features markdown support, with preview and shortcuts  
+- **Word & Character Counts**  
+- **Customizable Interface:** supports theme import/export, font, layout, and color tweaks  
+- **Export Options:** export content as plain text (`.txt`), HTML (`.html`), or Markdown (`.md`)  
+- **Persistent Settings:** your work is saved locally in your browser, even when you exit the app. **Make sure to save often!**  
+- **Offline Support:** OwlWriter works even without internet connection!  
 
 ## Screenshots
 
@@ -31,22 +32,12 @@ Inspired by <a href="https://blank.page/"  >blank.page</a>, and <a href="https:/
   <em>Sakura Theme (with text)</em>
 </p>
 
+## Made With
 
-## Soon
-- ~~Multiple Pages~~ - implemented!
-    - Folders/Groups
-- Line highlighting (focused mode)
-- ~~Fullscreen~~ - implemented!
-- Full offline support (use service workers)
-- ~~Import and export settings~~ - implemented, need further testing
-- ~~Formatting options popup on highlight~~ - implemented, need further testing
-
-## Technologies Used
-
-- **HTML5**
-- **Tailwind CSS**
-- **JavaScript**
-- **Marked.js**
-- **SortableJS**
+- **HTML5**  
+- **Javascript**  
+- **Tailwind CSS CLI**  
+- **Marked.js:** for markdown support  
+- **SortableJS:** for re-ordering control bar buttons  
 
 Special thanks to HeroIcons for the icons!
