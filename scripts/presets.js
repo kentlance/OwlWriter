@@ -57,6 +57,8 @@ const randomPlaceholders = [
   `"A word after a word after a word is power." — Margaret Atwood`,
   `"Tears are words that need to be written." — Paul Coelho`,
   `"There is no greater agony than bearing an untold story inside you." — Maya Angelou`,
+  `"Writing is the painting of the voice" — Voltaire`,
+  `"I know nothing in the world that has as much power as a word. Sometimes I write one, and look at it, until it shines." — Emily Dickinson`,
 ];
 
 // Get a random placeholder from the randomPlaceholders array
@@ -88,7 +90,7 @@ const builtInPresets = {
     settings: defaultSettings,
     colors: mapColorNames(defaultColors.light),
   },
-  "Minimalist - Light": {
+  "Minimalist (Dark)": {
     settings: {
       documentPanelWidth: 700,
       writingAreaFontFamily: "system-sans",
@@ -118,7 +120,7 @@ const builtInPresets = {
       sliderTrackBgColor: "#e0e0e0",
     },
   },
-  "Minimalist - Dark": {
+  "Minimalist (Dark)": {
     settings: {
       documentPanelWidth: 700,
       writingAreaFontFamily: "system-sans",
@@ -170,7 +172,7 @@ const builtInPresets = {
     colors: {
       accentColor: "#a3b18a",
       appBgColor: "#fefae0",
-      appTextColor: "#eabfa4",
+      appTextColor: "#d06f33",
       writingAreaBgColor: "#fffbe6",
       writingAreaTextColor: "#6c584c",
       markdownViewTextColor: "#6c584c",
@@ -200,7 +202,7 @@ const builtInPresets = {
     colors: {
       accentColor: "#67e8f9",
       appBgColor: "#e0f2f7",
-      appTextColor: "#67e8f9",
+      appTextColor: "#0696aa",
       writingAreaBgColor: "#ffffff",
       writingAreaTextColor: "#083344",
       markdownViewTextColor: "#083344",
@@ -299,7 +301,7 @@ const builtInPresets = {
       sliderTrackBgColor: "#e0e0e0",
     },
   },
-  NeoBrutaliSt: {
+  Neobrutalist: {
     settings: {
       documentPanelWidth: 960,
       writingAreaFontFamily: "monospace",
@@ -327,6 +329,36 @@ const builtInPresets = {
       controlBarButtonBgColor: "#3D3D3D",
       controlBarButtonIconColor: "#EBEBEB",
       sliderTrackBgColor: "#e0e0e0",
+    },
+  },
+  Forest: {
+    settings: {
+      documentPanelWidth: 820,
+      writingAreaFontFamily: "raleway",
+      fontSize: 18,
+      writingAreaTextAlign: "justify",
+      letterSpacing: 0.02,
+      lineHeight: 1.75,
+      wordSpacing: 1,
+      markdownViewFontSize: 17,
+      markdownViewTextAlign: "justify",
+      isWordCountVisible: true,
+      hideControlBarOnHover: false,
+      controlBarButtonOpacity: 1,
+      writingAreaPlaceholder: "RANDOM_PLACEHOLDER_FOREST",
+      showMarkdownPopup: true,
+      useRandomPlaceholder: true,
+    },
+    colors: {
+      accentColor: "#5e8c61",
+      appBgColor: "#d7e8c6",
+      appTextColor: "#438b48",
+      writingAreaBgColor: "#ffffff",
+      writingAreaTextColor: "#2c3a26",
+      markdownViewTextColor: "#2c3a26",
+      controlBarButtonBgColor: "#d9ead3",
+      controlBarButtonIconColor: "#274d32",
+      sliderTrackBgColor: "#ccd5ae",
     },
   },
 };
