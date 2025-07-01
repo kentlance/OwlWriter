@@ -22,10 +22,22 @@
 
     <div id="overlay" class="hidden"></div>
 
-    <div id="controlBar" class="control-bar p-4 flex justify-end relative z-50">
+    <div
+      id="controlBar"
+      class="control-bar p-4 flex justify-between items-center relative z-50"
+    >
+      <!-- Left aligned buttons-->
+      <div id="controlBarLeft" class="flex items-center gap-x-2"></div>
+      <!-- Center aligned buttons-->
+      <div id="controlBarCenter" class="flex items-center gap-x-2"></div>
+      <!-- Right aligned buttons-->
+      <div id="controlBarRight" class="flex items-center gap-x-2"></div>
+    </div>
+
+    <div id="buttonStash" style="display: none">
       <button
         id="pagesButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Manage Pages"
       >
         <svg
@@ -46,7 +58,7 @@
 
       <button
         id="importButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Import File"
       >
         <svg
@@ -63,12 +75,9 @@
             d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           ></path>
         </svg>
+        <input type="file" id="fileInput" accept=".txt,.md" class="hidden" />
       </button>
-      <input type="file" id="fileInput" accept=".txt,.md" class="hidden" />
-      <div
-        id="exportButtonContainer"
-        class="relative inline-block text-left mr-2"
-      >
+      <div id="exportButtonContainer" class="relative inline-block text-left">
         <button
           id="exportButton"
           class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
@@ -127,7 +136,7 @@
 
       <button
         id="copyAllButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Copy All Content"
       >
         <svg
@@ -148,7 +157,7 @@
 
       <button
         id="markdownViewButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Toggle Markdown View"
       >
         <svg
@@ -175,7 +184,7 @@
 
       <button
         id="helpButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Show Markdown Shortcuts"
       >
         <svg
@@ -196,7 +205,7 @@
 
       <button
         id="fullScreenToggleButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Toggle Fullscreen"
       >
         <svg
@@ -217,7 +226,7 @@
 
       <button
         id="settingsButton"
-        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 mr-2"
+        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow-md hover:shadow-lg transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
         title="Settings"
       >
         <svg
@@ -1376,10 +1385,7 @@
             Reset
           </button>
         </div>
-        <div
-          id="buttonOrderSettingsContainer"
-          class="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-inner flex flex-col space-y-2"
-        ></div>
+        <div id="buttonOrderSettingsContainer" class="flex flex-col"></div>
       </div>
       <button
         id="resetAllColors"

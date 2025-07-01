@@ -441,7 +441,7 @@ function resetAllToDefault() {
   saveSettings(); // Save the default settings to localStorage
 }
 
-function showControlBar() {
+export function showControlBar() {
   if (appSettings.hideControlBarOnHover) {
     // Use appSettings
     controlBar.classList.add("control-bar-show");
@@ -449,7 +449,7 @@ function showControlBar() {
   }
 }
 
-function hideControlBar() {
+export function hideControlBar() {
   if (
     appSettings.hideControlBarOnHover &&
     !controlBar.matches(":hover") &&

@@ -65,7 +65,6 @@ body {
 #controlBar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem;
   box-sizing: border-box;
   width: 100%;
 }

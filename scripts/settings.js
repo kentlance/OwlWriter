@@ -15,7 +15,7 @@ export const defaultSettings = {
   
 Markdown is supported, so you can use **bold**, *italics*, and [links](https://example.com). More can be found at the info button.
 
-Your work is saved locally on your browser, so make sure to save often!
+Your work is saved locally on your browser, so make sure to save often! The app also works offline!
   
 Write anything... `,
   showMarkdownPopup: true,
