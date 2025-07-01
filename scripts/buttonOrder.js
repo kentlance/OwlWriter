@@ -156,7 +156,7 @@ function initializeSortableUI() {
   const leftSection = document.createElement("div");
   leftSection.className = "mb-4";
   leftSection.innerHTML =
-    '<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Left Side Buttons</h4>';
+    "<h4 class='text-sm font-semibold text-current mb-2'>Left Side Buttons</h4>";
   settingsContainer.appendChild(leftSection); // Append the header section first
 
   const leftList = document.createElement("div");
@@ -168,7 +168,7 @@ function initializeSortableUI() {
   const centerSection = document.createElement("div");
   centerSection.className = "mb-4";
   centerSection.innerHTML =
-    '<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Center Buttons</h4>';
+    "<h4 class='text-sm font-semibold text-current mb-2'>Center Buttons</h4>";
   settingsContainer.appendChild(centerSection);
 
   const centerList = document.createElement("div");
@@ -180,7 +180,7 @@ function initializeSortableUI() {
   const rightSection = document.createElement("div");
   rightSection.className = "mb-4";
   rightSection.innerHTML =
-    '<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Right Side Buttons</h4>';
+    "<h4 class='text-sm font-semibold text-current mb-2'>Right Side Buttons</h4>";
   settingsContainer.appendChild(rightSection);
 
   const rightList = document.createElement("div");
